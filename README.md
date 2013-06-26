@@ -1,4 +1,4 @@
 mygolangtoys
 ============
 
-go-lang toys
+This is my small go-lang programs or tests.
