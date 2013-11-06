@@ -20,7 +20,6 @@ func main() {
 		if len(f1.String()) == 1000 {
 			break
 		}
-//		fmt.Println(i, " ", f1.String(), " ", f2.String())
 	}
 	
 	fmt.Println(i, " ", f1.String())

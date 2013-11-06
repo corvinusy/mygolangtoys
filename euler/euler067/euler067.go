@@ -2,11 +2,12 @@ package main
 
 import (
     "fmt"
+	"io/ioutil"
 	"strings"
 	"strconv"
 )
 
-const SIZE = 15
+const SIZE = 100
 
 type Node struct {
 	row int
@@ -19,28 +20,21 @@ type Node struct {
 func main() {
 
 	var (
-		source string = 
-`75
-95 64
-17 47 82
-18 35 87 10
-20 04 82 47 65
-19 01 23 75 03 34
-88 02 77 73 07 63 67
-99 65 04 28 06 16 70 92
-41 41 26 56 83 40 80 70 33
-41 48 72 33 47 32 37 16 94 29
-53 71 44 65 25 43 91 52 97 51 14
-70 11 33 28 77 73 17 78 39 68 17 57
-91 71 52 38 17 14 91 43 58 50 27 29 48
-63 66 04 68 89 53 67 30 73 16 69 87 40 31
-04 62 98 27 23 09 70 98 73 93 38 53 60 04 23`
-
+//		source string
 		strs []string
 		strnums []string
 		tmp int64
 		t1, t2 int
 	)
+
+	//read file into source
+
+	content, err := ioutil.ReadFile("triangle.txt")
+	if err != nil {
+		panic("File not read")
+	}
+
+	source := string(content)
 
 	//create tree and init with 0
 	tree := make([][]Node, SIZE)
@@ -78,14 +72,6 @@ func main() {
 				tree[i][j].weight += t2
 			}
 		}
-	}
-
-
-	for i := range tree {
-		for j:= range tree[i] {
-			fmt.Printf("%2d/%3d ", tree[i][j].value, tree[i][j].weight)
-		}
-		fmt.Println();
 	}
 
 	fmt.Println(tree[0][0].weight + tree[0][0].value)

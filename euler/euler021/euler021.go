@@ -11,8 +11,8 @@ func main() {
 		di int64
 	)
 	for i = 2; i < 10000; i++ {
-		di = divsum(i) - i
-		if (di != i) && ((divsum(di) - di) == i) {
+		di = divsum(i)
+		if (di != i) && ((divsum(di)) == i) {
 			sum = sum + i
 			fmt.Println(i, di)
 		}
@@ -63,5 +63,5 @@ func divsum(num int64) int64 {
 	if (num > 1) {
 		sum = sum * (num + 1)
 	}
-	return sum;
+	return sum - num;
 }
