@@ -46,9 +46,10 @@ func divcount(num uint64, primes []uint64) uint64 {
 	var n, count uint64
 	
 	count = 0
-	for n = 0; primes[n] < num/6; n++ {
+	for n = 0; primes[n] <= num; n++ {
 		if num % primes[n] == 0 {
 			count++
+			num /= primes[n]
 		}
 	}
 	return count
