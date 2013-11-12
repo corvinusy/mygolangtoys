@@ -24,6 +24,7 @@ func main() {
 	time1 := time.Now();
 
 	create_primes_atkin(2*LIMIT, &primes, &prmap)
+//	create_primes_daisy(2*LIMIT, &primes, prmap)
 
 
 	time2 := time.Since(time1);
@@ -112,3 +113,40 @@ func create_primes_atkin (limit int64, primes *([]int64), prmap *(map[int64]bool
 	return count
 }
 /*-----------------------------------------------------------------------------*/
+
+
+// Send the sequence 2, 3, 4, ... to channel 'ch'.
+func generate(ch chan<- int64) {
+	var i int64
+	for i = 2; ; i++ {
+		ch <- i // Send 'i' to channel 'ch'.
+	}
+}
+
+// Copy the values from channel 'in' to channel 'out',
+// removing those divisible by 'prime'.
+func filter(in <-chan int64, out chan<- int64, prime int64) {
+	for {
+		i := <-in // Receive value from 'in'.
+		if i%prime != 0 {
+			out <- i // Send 'i' to 'out'.
+		}
+	}
+}
+
+// The prime sieve: Daisy-chain Filter processes.
+func create_primes_daisy(LIMIT int64, primes *[]int64, prmap map[int64]bool) {
+
+	var i int64
+	ch1 := make(chan int64) // Create a new channel.
+	go generate(ch1)      // Launch Generate goroutine.
+	for i = 0; i < LIMIT; i++ {
+		prime := <-ch1
+		prmap[prime] = true
+		*primes = append(*primes, prime)
+//		print(prime, "\n")
+		ch2 := make(chan int64)
+		go filter(ch1, ch2, prime)
+		ch1 = ch2  //stop generate pattern
+	}
+}

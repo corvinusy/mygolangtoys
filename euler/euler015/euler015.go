@@ -7,8 +7,8 @@ import (
 
 func main() {
 
-	z := big.NewInt(0)
-	z = z.Binomial(40, 20);
+	z := new (big.Int)
+	z.Binomial(40, 20);
 
 	fmt.Println(z.String())
 
