@@ -7,14 +7,14 @@ import (
 
 func main() {
 
-    const LIMIT = 1e4
+    const LIMIT = 1e7
 
     var n1, n2, n3, n4, n5, result uint64
 
     primes := make([]uint64, 0, LIMIT)
     prmap := make(map[uint64]bool, 0)
 
-    create_primes_atkin(LIMIT * 100, &primes, prmap)
+    create_primes_atkin(LIMIT * 10, &primes, prmap)
 
     result = 1e6
 
