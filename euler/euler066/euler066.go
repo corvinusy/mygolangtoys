@@ -109,7 +109,7 @@ func main() {
 		}
 		
 	}
-	
+	fmt.Println("result:", zres)
 }
 /*-----------------------------------------------------------------------------*/
 func is_periodic(a, pb, qb []int64) (bool, int64) {

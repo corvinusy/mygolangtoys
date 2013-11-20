@@ -29,10 +29,10 @@ func main() {
 	c := make([]int, len(primes))
 
 	for greedy_alg(LIMIT, primes, c) == 0 {
-		greedy_alg(LIMIT, primes, c
+		greedy_alg(LIMIT, primes, c)
 	}
 
-	fmt.Println(greedy_alg(LIMIT, primes))
+	fmt.Println(greedy_alg(LIMIT, primes, c))
 }
 /*-----------------------------------------------------------------------------*/
 func greedy_alg(n_in int, primes []int, c []int) int {

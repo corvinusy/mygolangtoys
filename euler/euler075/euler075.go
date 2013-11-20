@@ -2,7 +2,7 @@ package main
 
 import (
     "fmt"
-	"time"
+    "time"
 )
 
 /*
@@ -13,87 +13,86 @@ import (
 	//1e5 = 11624
 */
 
-
-type Triple struct  {
-	a int
-	b int
-	c int
+type Triple struct {
+    a   int
+    b   int
+    c   int
 }
 
 func main() {
 
-	var LIMIT int = 1.5e6
+    var LIMIT int = 1.5e6
 
-	pslice := make([]Triple, 0)
+    pslice := make([]Triple, 0)
 
-	var start, next Triple 
+    var start, next Triple
 
-	start.a = 3
-	start.b = 4
-	start.c = 5
+    start.a = 3
+    start.b = 4
+    start.c = 5
 
-	t1 := time.Now()
+    t1 := time.Now()
 
-	pslice = append(pslice, start)
+    pslice = append(pslice, start)
 
-	// create primitive Pyth-triplets
+    // create primitive Pyth-Triplets
 
-	for i:=0; ; i++ {
-		next = nextU(pslice[i])
-		if next.perimeter() <= LIMIT {
-			pslice = append(pslice, next )
-		}
+    for i := 0; ; i++ {
+        next = nextU(pslice[i])
+        if next.perimeter() <= LIMIT {
+            pslice = append(pslice, next)
+        }
 
-		next = nextA(pslice[i])
-		if next.perimeter() <= LIMIT {
-			pslice = append(pslice, next )
-		}
+        next = nextA(pslice[i])
+        if next.perimeter() <= LIMIT {
+            pslice = append(pslice, next)
+        }
 
-		next = nextD(pslice[i])
-		if next.perimeter() <= LIMIT {
-			pslice = append(pslice, next )
-		}
+        next = nextD(pslice[i])
+        if next.perimeter() <= LIMIT {
+            pslice = append(pslice, next)
+        }
 
-		if len(pslice) == i+1 {
-			break
-		}
-	}
+        if len(pslice) == i+1 {
+            break
+        }
+    }
 
-	// append non-primitive Pyth-triplets
+    // append non-primitive Pyth-Triplets
 
-	prim_len := len(pslice)
+    prim_len := len(pslice)
 
-	for i:=0; i < prim_len  ; i++ {
-		for j := 2; ; j++ {
-			next = pslice[i].multiply(j)
-			if next.perimeter() <= LIMIT {
-				pslice = append(pslice, next)
-			} else {
-				break
-			}
-		}
-	}
+    for i := 0; i < prim_len; i++ {
+        for j := 2; ; j++ {
+            next = pslice[i].multiply(j)
+            if next.perimeter() <= LIMIT {
+                pslice = append(pslice, next)
+            } else {
+                break
+            }
+        }
+    }
 
-	perimap := make(map[int]int, 0)
+    perimap := make(map[int]int, 0)
 
-	for i:=0; i < len(pslice); i++ {
-		perimap[pslice[i].perimeter()]++
-	}
+    for i := 0; i < len(pslice); i++ {
+        perimap[pslice[i].perimeter()]++
+    }
 
-	count := 0
-	for _, n := range perimap {
-		if n == 1 {
-			count++
-		}
-	}
+    count := 0
+    for _, n := range perimap {
+        if n == 1 {
+            count++
+        }
+    }
 
+    t2 := time.Since(t1)
 
-	t2 := time.Since(t1)
+    fmt.Println(LIMIT, count, t2)
 
-	fmt.Println(LIMIT, count, t2)
-
-	return
+    return
 }
+
 /*-----------------------------------------------------------------------------*/
 /*
 Pythagorean primitive matrices
@@ -107,49 +106,53 @@ Pythagorean primitive matrices
 
  -1 -2 -2
   2  1  2  D
-  2  2  3 
+  2  2  3
 */
 
-func nextU (t Triple) Triple {
-	var next Triple
+func nextU(t Triple) Triple {
+    var next Triple
 
-	next.a = t.a - 2*t.b + 2*t.c
-	next.b = 2*t.a - t.b + 2*t.c
-	next.c = 2*t.a - 2*t.b + 3*t.c
+    next.a = t.a - 2*t.b + 2*t.c
+    next.b = 2*t.a - t.b + 2*t.c
+    next.c = 2*t.a - 2*t.b + 3*t.c
 
-	return next
+    return next
 }
+
 /*-----------------------------------------------------------------------------*/
-func nextA (t Triple) Triple {
-	var next Triple
+func nextA(t Triple) Triple {
+    var next Triple
 
-	next.a = t.a + 2*t.b + 2*t.c
-	next.b = 2*t.a + t.b + 2*t.c
-	next.c = 2*t.a + 2*t.b + 3*t.c
+    next.a = t.a + 2*t.b + 2*t.c
+    next.b = 2*t.a + t.b + 2*t.c
+    next.c = 2*t.a + 2*t.b + 3*t.c
 
-	return next
+    return next
 }
+
 /*-----------------------------------------------------------------------------*/
-func nextD (t Triple) Triple {
-	var next Triple
+func nextD(t Triple) Triple {
+    var next Triple
 
-	next.a = -1*t.a + 2*t.b + 2*t.c
-	next.b = -2*t.a + t.b + 2*t.c
-	next.c = -2*t.a + 2*t.b + 3*t.c
+    next.a = -1*t.a + 2*t.b + 2*t.c
+    next.b = -2*t.a + t.b + 2*t.c
+    next.c = -2*t.a + 2*t.b + 3*t.c
 
-	return next
+    return next
 }
+
 /*-----------------------------------------------------------------------------*/
 func (t *Triple) perimeter() int {
-	return t.a + t.b + t.c
+    return t.a + t.b + t.c
 }
+
 /*-----------------------------------------------------------------------------*/
 func (t *Triple) multiply(n int) Triple {
-	var next Triple
+    var next Triple
 
-	next.a = t.a * n
-	next.b = t.b * n
-	next.c = t.c * n
+    next.a = t.a * n
+    next.b = t.b * n
+    next.c = t.c * n
 
-	return next
+    return next
 }

@@ -74,6 +74,7 @@ func main() {
 			b, period = is_periodic(a, pb, qb)
 			if b {
 				ds = append(ds, period)
+				fmt.Println (d, a)
 				break
 			}
 		}
