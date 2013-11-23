@@ -5,64 +5,94 @@ import (
 	"math"
 )
 
-// Greedy algorythm
-// Conjecture: for any number and prime set exists only one prime partition with coeff > 0
-// It can be found by greedy algorythm
-// #3# = 0 
-// #4# = 1 (2 + 2)
-// #5# = 1 (2 + 3)
-// #6# = 2 (3*2; 2*3) #4# + 1
-// #7# = 2 (2*2+3, 2+5) #5# + 1
-// #8# = 3 (4*2, 2+2*3, 5+3) #6# + 1
-// #9# = 4 (2*3+3, 2*2+5, 7+2, 3*3)
-// #10# = 5 (5*2; 2*2 + 2*3; 2+3+5; 2*5; 3+7)
-// #11# =   ()
-
-const LIMIT = 98
+const LIMIT = 100
 
 func main() {
 
 	primes := create_primes_atkin(LIMIT*2)
-	fmt.Println(primes)
 
-
-	c := make([]int, len(primes))
-
-	for greedy_alg(LIMIT, primes, c) == 0 {
-		greedy_alg(LIMIT, primes, c)
+	for i:= 10; i < LIMIT; i++ {
+		n := count_rep(i, primes)
+		fmt.Println(i, n)
+		if n > 5000 {
+			break
+		}
 	}
-
-	fmt.Println(greedy_alg(LIMIT, primes, c))
 }
 /*-----------------------------------------------------------------------------*/
-func greedy_alg(n_in int, primes []int, c []int) int {
+func count_rep(n int, primes []int) int {
 
 	lenp := 0
 
 	for i:=0; ; i++ {
-		if primes[i] > n_in {
+		if primes[i] > n {
 			lenp = i - 1
 			break
 		}
 	}
 
+	c := make([]int, lenp+1)
+
+	/*
+     * c = slice of prime_number counts,
+     * i.e. c[0] = count of '2', c[1] = count of '3', c[2] = count of '5'...
+     */
+
 	count := 0
 
-	n := n_in
+	//init c
 
-	for	i := lenp; (n > 0) && (i>=0); i-- {
+	c[0] = 1
 
-		c[i] = n / primes[i]
+	for !is_c_null(c) {
 
-		if n == c[i]*primes[i] {
+		if is_c_ok(n, c, primes) {
 			count++
-			fmt.Println(primes[lenp], c)
 		}
-
-		n = n - c[i]*primes[i]	
+		inc(n, c, primes)
 	}
 
+
 	return count
+}
+/*-----------------------------------------------------------------------------*/
+func is_c_null(c []int) bool {
+	for _, v := range c {
+		if v != 0 {
+			return false
+		}
+	}
+	return true
+}
+/*-----------------------------------------------------------------------------*/
+func is_c_ok(n int, c []int, primes []int) bool {
+	for i := 0; i < len(c); i++ {
+		n -= c[i]*primes[i]
+		if n < 0 {return false}
+	}
+	return n == 0
+}
+/*-----------------------------------------------------------------------------*/
+func inc(n int, c []int, primes []int) []int {
+
+	for i := 0; i < len(c); i++ {
+		c[i]++
+		if sumc(c, primes) <= n {
+			return c
+		}
+		c[i] = 0
+	}
+	return c
+}
+/*-----------------------------------------------------------------------------*/
+func sumc(c []int, primes []int) int {
+
+	result := 0
+
+	for i, _ := range c {
+		result += c[i]*primes[i]
+	}
+	return result
 }
 /*-----------------------------------------------------------------------------*/
 func create_primes_atkin (limit int) []int  {
