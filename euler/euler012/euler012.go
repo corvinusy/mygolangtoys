@@ -16,7 +16,7 @@ func main() {
 		if num % (30) != 0 {
 			continue
 		}
-		divs = get_div_num(num)
+		divs = divNum(num)
 		if divs >= 500 {
 			t2 := time.Since(t1)
 			fmt.Printf("i = %d, num = %d, divs = %d\n%v\n", i, num, divs, t2)
@@ -25,7 +25,7 @@ func main() {
 	}
 }
 
-func get_div_num (num int64) int64 {
+func divNum (num int64) int64 {
 
 	var count int64 = 2;
 	var i int64;

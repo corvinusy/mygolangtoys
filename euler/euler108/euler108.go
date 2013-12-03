@@ -2,84 +2,118 @@ package main
 
 import (
 	"fmt"
-	"math/big"
+	"math"
 )
 
-/*
-1/x + 1/y = 1/n
-*/
 
-const LIMIT = 1e5
+/* If n = (p1^a1)(p2^a2)...(pt^at), 
+ * 2-partitions = ((2 a1 + 1)(2 a2 + 1) ... (2 at + 1) + 1)/2. 
+ * We want ((2 a1 + 1)(2 a2 + 1) ... (2 at + 1) + 1)/2 > 1000 
+ * (2 a1 + 1)(2 a2 + 1) ... (2 at + 1) >= 2000
+ *
+ */
 
-var pvector []int64
+const LIMIT = 1e7
+
+var primes []int
 
 func main() {
 
-	var (
-		n int64
-		x int64
-		count int64
-	)
+	primes = create_primes_atkin(1e6)
 
-	pvector = append(pvector, 2,3,5,7,11,13,17,19,23,29,31)
 
-	z  := new(big.Rat)
-	z1 := new(big.Rat)
+	for n := int(1); n < LIMIT; n++ {
 
-	cmap := make(map[int64]int64)
+		primeVec := getFactors(n)
 
-	for x = 0; x < 6; x++  {
-		cmap[pvector[x]] = 1
+		units := 1
+
+		for i, _ := range primeVec {
+			units *= 2*primeVec[i] + 1
+		}
+
+		units += 1; units /= 2
+
+		if units > 1e3 {
+			fmt.Println(n, units )
+			break
+		}
 	}
 
-	for {
-		cmap = inc(cmap)
-		
-		n = 1
+}
+/*----------------------------------------------------------------------------*/
+func getFactors (num int) []int {
 
-		for x, _ = range cmap {
-			if cmap[x] > 0 {
-				n *= cmap[x] * x
-			}
+	sqrnum := int(math.Sqrt(float64(num)))
+	
+	vector := make([]int, 0)
+
+	for i := 0; primes[i] <= sqrnum; i++ {
+
+		if num % primes[i] == 0 {
+			vector = append(vector, 0)
 		}
 
-		z.SetFrac64(1, n)
-		count = 0
-		
-		for x = n; x <= n * 2; x++ {
-
-			z1.SetFrac64(1, x)
-			z1.Sub(z,z1)
-
-			if z1.Num().String() == "1" {
-				count++
-			}
-
-			if count > 1e4 {
-				return
-			}
+		for num % primes[i] == 0 {
+			vector[ len(vector)-1 ]++
+			num /= primes[i]
 		}
-		if count > 1e3 {
-			fmt.Println(n, count)				
-		}
-
 	}
+
+	return vector
 }
 /*-----------------------------------------------------------------------------*/
-func inc(cmap map[int64]int64) map[int64]int64 {
+func create_primes_atkin (limit int) []int  {
 
-	for i:=0; i < 10; i++ {
-		if cmap[pvector[i]] < 10 {
-			cmap[pvector[i]]++
-			return cmap
-		} else {
-			if cmap[pvector[i]] == 10 {
-				cmap[pvector[i]] = 1
-				cmap[pvector[i+1]]++
-			}
-		}
-	}
-	panic("fuck")
-	return nil
+    var i, x, y, n int
 
+    sqr_lim := int(math.Sqrt(float64(limit)))
+    sieve_nums := make([]bool, limit+1)
+	primes := make([]int, 0)
+
+
+    for i = 5; i <= limit ; i++ {
+        sieve_nums[i] = false
+    }
+
+    sieve_nums[2] = true
+    sieve_nums[3] = true
+    
+    for x = 1; x <= sqr_lim; x++ {
+        for y = 1; y <= sqr_lim; y++ {
+
+            n = 4 * x * x + y * y
+            if (n <= limit) && ( (n % 12 == 1) || (n % 12 == 5) ) {
+                sieve_nums[n] = !sieve_nums[n]
+            }
+
+            n = n - x * x
+            if (n <= limit) && (n % 12 == 7) {
+                sieve_nums[n] = !sieve_nums[n]
+            }
+
+            n = n - 2 * y * y
+            if (x > y) && (n <= limit) && (n % 12 == 11) {
+                sieve_nums[n] = !sieve_nums[n]
+            }
+        }
+    }
+
+    for i = 5; i <= sqr_lim; i++ {
+        if sieve_nums[i] {
+            n = i * i
+            for j := n; j <= limit; j += n {
+                sieve_nums[j] = false
+            }
+        }
+    }
+    
+    for i = 0; i <= limit; i++ {
+        if sieve_nums[i] {
+            primes = append(primes, i)
+        } 
+    }
+
+    return primes
 }
+/*----------------------------------------------------------------------------*/

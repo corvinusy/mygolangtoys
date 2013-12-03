@@ -6,62 +6,78 @@ import (
 
 //99999999019
 
-const LIMIT = 5e8
+// for prime avelcm(n) =  n * n * (n/2) + n
 
-//var cache [LIMIT+1]int64
+
+// A(n) = sumLcm(n)
+
+// a(n) = Sum_{k=1..n} n/GCD(n,k)
+// A(n) = (1+a(n))/2, where a(n) = Sum_{k=1..n} n/GCD(n,k). 
+// a(x*y) = a(x) * a(y) 
+// a(prime) =  prime * (prime-1) + 1
+
+
+
+const LIMIT = 1e5
+
+const MOD = 999999017
+
+//const MOD = 1e9 
+
+const SEEK = 99999999019
 
 func main() {
-/*
-	for i:=1; i < len(cache); i++ {
-		cache[i] = ave_sum_lcm(int64(i))
+
+
+	for n := int64(2); n <= 100; n++ {
+		slc := aveLcmMod(n, MOD)
+		slp := n*n*(n-1)/2 + n
+		// slp := (n*(n-1)/2 + 1) * n = n*n - n*1/2 + 1
+		k := int64(n)
+		Ckn := k*n*(n-1)/2 + 1
+		fmt.Println("sumLcm(", n, ") =", slc, "\tsumLcmPrime = ", slp, "\tdelta = ", (slp-slc*n)/n, "\tCkn", Ckn)
 	}
-	cache[0] = 0
-*/
 
+	return
 
-	for i := int64(1); i <= 200; i++ {
-		fmt.Println(i,":\t", i*(i-1)/2+1, "\tave =", ave_lcm(i), "\td = ", i*(i-1)/2 +1 - ave_lcm(i) )
-	}
-	return 
+	fmt.Println ("sf(10) =", sf(10))
 
+	fmt.Println ("sf(100) =", sf(100))
 
-	fmt.Println (sf(100))
-	fmt.Println("ave_lcm(",LIMIT,")=", ave_lcm(LIMIT))
-//	fmt.Println (sf(99999999019))
+	fmt.Println (sf(SEEK))
 	
 }
 /*-----------------------------------------------------------------------------*/
-func lcm(a, b int64) int64 {
 
-	return (a / gcd(a,b)) * b
+/*-----------------------------------------------------------------------------*/
+func lcmMod(a, b, mod int64) int64 {
+
+	return ((((a % mod) / gcdMod(a,b, MOD)) % mod) * (b % mod)) % mod
 
 }
 /*-----------------------------------------------------------------------------*/
-func gcd(a, b int64) int64 {
+func gcdMod(a, b, mod int64) int64 {
 
 	for b != 0 {
 		a, b = b, a % b
 	}
 
-	return a
+	return a % mod
 }
 /*-----------------------------------------------------------------------------*/
-func ave_lcm(n int64) int64 {
+func aveLcmMod(n, mod int64) int64 {
 
 	var (
 		sum int64 = 0
 	)
 
-	for i := int64(1); i <= n; i++ {
+	for p := int64(1); p <= n; p++ {
 
-		sum = (sum + i / gcd(n, i)) // 999999017
+		sum = (sum + lcmMod(n, p, MOD)) % mod
 
-		if sum > 1e15 {
-			sum %= 1e10
-		}
 	}
 	
-	return sum 
+	return (sum / (n % mod) ) % mod
 }
 /*-----------------------------------------------------------------------------*/
 func sf(n int64) int64 {
@@ -72,15 +88,14 @@ func sf(n int64) int64 {
 	)
 
 	for i := int64(1); i <= n; i++ {
-		res = ave_lcm(i) 
-		sum = sum + res
+		res = aveLcmMod(i, MOD) 
+		sum = (sum % MOD + res % MOD) % MOD
 
 		if i % 1e4 == 0 {
-			fmt.Println(i, sum)
+			fmt.Println("sf(",i, ") =" , sum)
 		}
 
-		if sum > 1e15 {sum %= 1e10} //999999017
 	}
 
-	return sum % 999999017
+	return sum
 }
