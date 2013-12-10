@@ -59,6 +59,7 @@ func isSatisfies(a []int) bool {
 		return false
 	}
 
+
 	//verify rule 2
 
 	// build subset-sums map

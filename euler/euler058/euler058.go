@@ -8,11 +8,11 @@ import (
 
 func main() {
 
-    milner_rabin_solution()
+    miller_rabin_solution()
 //  prime_map_solution()
 }
 /*-----------------------------------------------------------------------------*/
-func milner_rabin_solution() {
+func miller_rabin_solution() {
 
     const SIZE = 26250
 
