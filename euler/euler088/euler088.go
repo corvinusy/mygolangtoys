@@ -2,95 +2,107 @@ package main
 
 import (
     "fmt"
-	"github.com/cznic/mathutil"
 )
 
-const LIMIT = 10
+const LIMIT = 12000
+const UPPER = 13000
 
 func main() {
 
-	summap := make(map[int]int)
+	tmpmap := make(map[int]int) // temp map for reversed data
 
-	for n := 2; n <= LIMIT*2; n++ {
+	cache := make([][][]int,UPPER) // cache with always found factor lists
 
-		fts := mathutil.FactorInt(uint32(n))
+	for n := 1; n < UPPER; n++ {
 
-		divisors := make([]int, 0)
-		
-		// get slice of prime  divisors
-		for _, ft := range fts {
-			for ft.Power > 0 {
-				divisors = append(divisors, int(ft.Prime))
-				ft.Power--
-			}
-		}
+		factorLists := getFactorLists(n, cache) // divSet is [][]int
 
-		divs := getCombos(n, divisors)
-
-		fmt.Println(n, divs)
-
-		for i := range divs {
+		for i := range factorLists {
 
 			product := 1
-			for j := range divs[i] {
-				product *= divs[i][j]
+			for j := range factorLists[i] {
+				product *= factorLists[i][j]
 			}
 
 			sum := 0
-			for j := range divs[i] {
-				sum += divs[i][j]
+			for j := range factorLists[i] {
+				sum += factorLists[i][j]
 			}
 
-			k := product - sum + len(divs[i])
+			k := product - sum + len(factorLists[i])
 
-			if k == 10 {
-				fmt.Println(i, divs)
-			}
-
-			if summap[k] == 0 {
-				summap[k] = n
+			if tmpmap[k] == 0 {
+				tmpmap[k] = n
 			} 
 
 		}
-
 	}
 
-	fmt.Println(summap)
+	delete (tmpmap, 1) // remove 1 according to task definition
+
+	//prepare map for summation of keys
+	summap := make(map[int]bool)
+
+	for k, v := range tmpmap {
+		if k <= LIMIT {
+			summap[v] = true
+		}
+	}
+
+	sum := 0
+
+	for k := range summap {
+		sum += k
+	}
+
+	fmt.Println("sum =", sum)
 
 }
 /*-----------------------------------------------------------------------------*/
-func getCombos(n int, divs []int) [][]int {
+func getFactorLists(n int, cache [][][]int) [][]int {
+	// returns list of factor combinations
 
-	if len(divs) == 0 {
-		return [][]int{}
+	if n < 2 { return nil }
+
+	if cache[n] != nil {
+		return cache[n]
+	}
+	
+	// result placeholder
+	factorLists := make([][]int, 0)
+
+	// find factors
+	factors := make([]int, 0)
+
+	for i := 2; i <= n/2; i++ {
+		if n % i == 0 {
+			factors = append(factors, i)
+		}
 	}
 
-	combos := make([][]int, 0)	
+	factors = append(factors, n) // add itself to factors
 
-	for i := range divs {
+	// find tail-subfactors for all found factors
+	for i := range factors {
 
-		a := make([]int, 1)
+		tail := getFactorLists(n / factors[i], cache)
 
-		if n % divs[i] != 0 {
+		if tail == nil {
+			fl := make([]int, 1)
+			fl[0] = factors[i]
+			factorLists = append(factorLists, fl)
 			continue
 		}
 
-		a[0] = n / divs[i]
-
-		newcombos := getCombos(a[0], divs)
-
-		for i := range newcombos {
-			for j := range newcombos[i] {
-				a = append(a, newcombos[i][j])
-			}
+		for j := range tail {
+			fl := make([]int, 1)
+			fl[0] = factors[i]
+			fl = append(fl, tail[j]...)
+			factorLists = append(factorLists, fl)
 		}
-
-		if len(a) > 1 {
-			combos = append(combos, a)
-		}
-
 	}
 
+	cache[n] = factorLists
 
-	return combos
+	return factorLists
 }
