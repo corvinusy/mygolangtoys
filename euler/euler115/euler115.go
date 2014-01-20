@@ -9,15 +9,23 @@ import (
  * tiles = n!/(k1!*k2!...km!)
  */
 
-const SIZE = 50
-const TSIZE = 3
+const SIZE = 1000
+const TSIZE = 50
 
 func main() {
 
-	cache := make(map[int]int)
+	for tsize := 3; tsize <= TSIZE; tsize++ {
 
-	fmt.Println(comb(TSIZE, SIZE, cache));
-	
+		for llen := tsize; llen <= SIZE; llen++ {
+
+			cache := make(map[int]int)
+
+			if comb(tsize, llen, cache) > 1e6 {
+				fmt.Println("TSIZE =", tsize, ", LLEN = ", llen)
+				break
+			}
+		}
+	}
 }
 /*----------------------------------------------------------------------------*/
 func comb(n, m int, cache map[int]int) int {
