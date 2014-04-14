@@ -4,33 +4,27 @@ import (
     "fmt"
 )
 
-/*
- * tileng n by m
- * tiles = n!/(k1!*k2!...km!)
- */
 
-const SIZE = 1000
+const LIMIT = 1e6
 const TSIZE = 50
 
 func main() {
 
-	for tsize := 3; tsize <= TSIZE; tsize++ {
+	for llen := TSIZE; llen <= TSIZE*10; llen++ {
 
-		for llen := tsize; llen <= SIZE; llen++ {
+		cache := make(map[int]int)
 
-			cache := make(map[int]int)
-
-			if comb(tsize, llen, cache) > 1e6 {
-				fmt.Println("TSIZE =", tsize, ", LLEN = ", llen)
-				break
-			}
+		if comb(TSIZE, llen, cache) > LIMIT {
+			fmt.Println("TSIZE =", TSIZE, ", LLEN = ", llen)
+			break
 		}
 	}
+
 }
 /*----------------------------------------------------------------------------*/
 func comb(n, m int, cache map[int]int) int {
 
-	if cache[m] > 0 {
+	if cache[m] != 0 {
 		return cache[m]
 	}
 
