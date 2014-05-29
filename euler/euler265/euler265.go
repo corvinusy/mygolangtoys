@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/cznic/mathutil"
 )
 
@@ -19,13 +19,13 @@ func main() {
 		ftslen = len(fts)
 
 		switch ftslen {
-		case 2 :
+		case 2:
 			if fts[0].Power == 1 && fts[1].Power == 1 {
-				count ++ 
+				count++
 			}
 
-		case 1 :
-			if fts[0].Power == 2 { 
+		case 1:
+			if fts[0].Power == 2 {
 				count++
 			}
 		}
@@ -33,5 +33,5 @@ func main() {
 	}
 
 	fmt.Println(count)
-	
+
 }

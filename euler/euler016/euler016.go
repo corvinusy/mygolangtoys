@@ -1,17 +1,17 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 	"strconv"
 )
 
 func main() {
 
-	z := big.NewInt(1);
-	z = z.Lsh(z, 1000);
+	z := big.NewInt(1)
+	z = z.Lsh(z, 1000)
 
-	s2k := z.String();
+	s2k := z.String()
 
 	var temp, sum int64 = 0, 0
 
@@ -19,9 +19,7 @@ func main() {
 		temp, _ = strconv.ParseInt(string(s), 10, 0)
 		sum = sum + temp
 	}
-	
+
 	fmt.Println(sum)
 
 }
-
-

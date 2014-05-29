@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -26,10 +26,11 @@ func main() {
 	for k, _ := range nummap {
 		finsum += k
 	}
-	
-	fmt.Println(nummap, finsum);
-	
+
+	fmt.Println(nummap, finsum)
+
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_pandigital(n int64) bool {
 
@@ -37,10 +38,10 @@ func is_pandigital(n int64) bool {
 
 	for i = 1; i < n/2; i++ {
 		for j = 1; j < n/2; j++ {
-			if i * j > n {
+			if i*j > n {
 				break
 			}
-			if i * j == n {
+			if i*j == n {
 				if is_satisfy(i, j, n) {
 					return true
 				}
@@ -49,13 +50,14 @@ func is_pandigital(n int64) bool {
 	}
 	return false
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_satisfy(i, j, n int64) bool {
-	str := strconv.FormatInt(i, 10) + strconv.FormatInt(j, 10) + strconv.FormatInt(n, 10);
+	str := strconv.FormatInt(i, 10) + strconv.FormatInt(j, 10) + strconv.FormatInt(n, 10)
 	if len(str) != 9 {
 		return false
 	}
-	for b := '1'; b <='9'; b++ {
+	for b := '1'; b <= '9'; b++ {
 		if strings.IndexRune(str, b) == -1 {
 			return false
 		}

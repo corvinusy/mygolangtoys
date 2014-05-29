@@ -1,14 +1,14 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
 func main() {
-	
+
 	const LIMIT = 1000
-	
+
 	z := big.NewRat(3, 2)
 
 	count := 0
@@ -24,7 +24,7 @@ func main() {
 		if len(z.Num().String()) > len(z.Denom().String()) {
 			count++
 		}
-		
+
 	}
 
 	fmt.Println(count)

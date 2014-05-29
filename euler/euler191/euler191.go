@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 const LIMIT = 30
@@ -19,9 +19,10 @@ func main() {
 			count += 1
 		}
 	}
-	
+
 	fmt.Println(count, total)
 }
+
 /*----------------------------------------------------------------------------*/
 func advance(a []int) bool {
 
@@ -62,6 +63,7 @@ func advance(a []int) bool {
 
 	return false
 }
+
 /*----------------------------------------------------------------------------*/
 func isOk(a []int) bool {
 
@@ -72,5 +74,5 @@ func isOk(a []int) bool {
 	}
 
 	return true
-	
+
 }

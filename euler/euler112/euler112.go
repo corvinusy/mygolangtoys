@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 const LIMIT = 1e7
@@ -35,21 +35,22 @@ func main() {
 
 	}
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_froggy(n int64) bool {
 
-	d := make([]int64,0)
+	d := make([]int64, 0)
 
 	if n < 100 {
 		return false
 	}
-	
+
 	if n > 1000000000 {
 		return true
 	}
 
 	for n > 0 {
-		d = append(d, n % 10)
+		d = append(d, n%10)
 		n /= 10
 	}
 

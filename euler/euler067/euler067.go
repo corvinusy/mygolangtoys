@@ -1,30 +1,29 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 const SIZE = 100
 
 type Node struct {
-	row int
-	col int
-	value int
+	row    int
+	col    int
+	value  int
 	weight int
 }
-
 
 func main() {
 
 	var (
-//		source string
-		strs []string
+		//		source string
+		strs    []string
 		strnums []string
-		tmp int64
-		t1, t2 int
+		tmp     int64
+		t1, t2  int
 	)
 
 	//read file into source
@@ -49,20 +48,17 @@ func main() {
 		}
 	}
 
-	
-	strs = strings.SplitAfter(source,"\n")
+	strs = strings.SplitAfter(source, "\n")
 
 	for i, s := range strs {
 		strnums = strings.Fields(s)
-		for j, sn := range strnums  {
+		for j, sn := range strnums {
 			tmp, _ = strconv.ParseInt(sn, 10, 0)
 			tree[i][j].value = int(tmp)
 		}
 	}
-	
 
-
-	for i:=SIZE-2; i>=0; i-- {
+	for i := SIZE - 2; i >= 0; i-- {
 		for j := 0; j < SIZE-1; j++ {
 			t1 = tree[i+1][j].value + tree[i+1][j].weight
 			t2 = tree[i+1][j+1].value + tree[i+1][j+1].weight
@@ -77,5 +73,3 @@ func main() {
 	fmt.Println(tree[0][0].weight + tree[0][0].value)
 
 }
-
-

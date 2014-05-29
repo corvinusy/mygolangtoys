@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/cznic/mathutil"
 )
 
@@ -12,24 +12,25 @@ func main() {
 	var (
 		dLen, prevDivLen, i int
 	)
-	
+
 	count := 0
 
 	prevDivLen = divLen(2)
 
-	for i = 3; i < LIMIT; i, prevDivLen = i + 1, dLen {
+	for i = 3; i < LIMIT; i, prevDivLen = i+1, dLen {
 
 		dLen = int(divLen32(uint32(i)))
-		
+
 		if dLen == prevDivLen {
 			count++
-		} 
+		}
 
 	}
 
 	fmt.Println(count)
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func divLen32(n uint32) uint32 {
 
@@ -43,6 +44,7 @@ func divLen32(n uint32) uint32 {
 
 	return result
 }
+
 /*----------------------------------------------------------------------------*/
 func divLen(n int) int {
 
@@ -51,11 +53,12 @@ func divLen(n int) int {
 	count = 0
 
 	for i = 1; i <= n; i++ {
-		if n % i == 0 {
+		if n%i == 0 {
 			count += 1
 		}
 	}
 
 	return count
 }
+
 /*----------------------------------------------------------------------------*/

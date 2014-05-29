@@ -1,20 +1,20 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"strconv"
 )
 
 func main() {
-	
+
 	const LIMIT = 1e6
 
 	var (
-		i, finsum  int64
-		s1, s2 string
+		i, finsum int64
+		s1, s2    string
 	)
 
-	numslice := make([]int64,0)
+	numslice := make([]int64, 0)
 
 	finsum = 0
 
@@ -29,14 +29,15 @@ func main() {
 	}
 	fmt.Println(numslice, finsum)
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_palindrome(s string) bool {
 
 	last := len(s) - 1
 	i := 0
 
-	for i < last - i {
-		if s[i] != s[last - i] {
+	for i < last-i {
+		if s[i] != s[last-i] {
 			return false
 		}
 		i++

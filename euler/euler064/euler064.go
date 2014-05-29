@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math"
 )
 
@@ -34,8 +34,8 @@ const LIMIT = 1e4
 func main() {
 
 	var (
-		d uint
-		b bool
+		d      uint
+		b      bool
 		period int
 	)
 
@@ -58,23 +58,23 @@ func main() {
 
 		a = append(a, sqd)
 		pb = append(pb, 0, a[0])
-		qb = append(qb, 0, d - a[0]*a[0])
-		a = append(a, (a[0] + pb[1])/qb[1])
+		qb = append(qb, 0, d-a[0]*a[0])
+		a = append(a, (a[0]+pb[1])/qb[1])
 
 		//	q = append(q, 1, a[1])
 		//	p = append(p, a[0], a[0]*a[1] + 1)
 
 		for n := 2; ; n++ {
-			pb = append(pb,  a[n-1]*qb[n-1] - pb[n-1] )
-			qb = append(qb, (d - pb[n]*pb[n]) / qb[n-1] )
-			
-			a = append(a, (a[0] + pb[n])/qb[n] )
+			pb = append(pb, a[n-1]*qb[n-1]-pb[n-1])
+			qb = append(qb, (d-pb[n]*pb[n])/qb[n-1])
+
+			a = append(a, (a[0]+pb[n])/qb[n])
 			//		p = append(p, a[n] * p[n-1] + p[n-2] )
 			//		q = append(q, a[n] * q[n-1] + q[n-2] )
 			b, period = is_periodic(a, pb, qb)
 			if b {
 				ds = append(ds, period)
-				fmt.Println (d, a)
+				fmt.Println(d, a)
 				break
 			}
 		}
@@ -84,20 +84,20 @@ func main() {
 	odds := 0
 
 	for _, d := range ds {
-		if d % 2 != 0 {
+		if d%2 != 0 {
 			odds++
 		}
 	}
 
-
 	fmt.Println(odds)
-	
+
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_periodic(a, pb, qb []uint) (bool, int) {
-	for i:=2; i < len(a); i++ {
+	for i := 2; i < len(a); i++ {
 		if (a[1] == a[i]) && (qb[1] == qb[i]) && (pb[1] == pb[i]) {
-			return true, i-1
+			return true, i - 1
 		}
 	}
 	return false, 0

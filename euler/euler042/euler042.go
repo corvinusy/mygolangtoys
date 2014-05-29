@@ -1,16 +1,16 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func main() {
 
 	var (
-		strs []string
+		strs           []string
 		count, wordnum int
 	)
 
@@ -21,7 +21,7 @@ func main() {
 	triangles := make(map[int]bool, 0)
 
 	for i := 1; i <= LIMIT; i++ {
-		triangles[(i * (i + 1)) >> 1] = true
+		triangles[(i*(i+1))>>1] = true
 	}
 
 	content, err := ioutil.ReadFile("words.txt")
@@ -31,7 +31,7 @@ func main() {
 
 	source := string(content)
 
-	strs = strings.SplitAfter(source,",")
+	strs = strings.SplitAfter(source, ",")
 
 	count = 0
 
@@ -56,5 +56,3 @@ func main() {
 	fmt.Println(count)
 
 }
-
-

@@ -1,10 +1,10 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/cznic/mathutil"
-	"sort"
 	"math"
+	"sort"
 )
 
 const (
@@ -25,15 +25,15 @@ const LIMIT = 10
 
 func main() {
 
-	nums := []int {1, 2, 3, 4}
+	nums := []int{1, 2, 3, 4}
 
-	resVector := make([]int,4)
+	resVector := make([]int, 4)
 	result := 0
 
 	for nums[3] < LIMIT {
 		seria := getMaxSeria(getSeria(nums))
-//		fmt.Println(nums, seria)
-		if result < seria { 
+		//		fmt.Println(nums, seria)
+		if result < seria {
 			result = seria
 			copy(resVector, nums)
 			fmt.Println(result, resVector)
@@ -44,16 +44,17 @@ func main() {
 	fmt.Println(result, resVector)
 
 	return
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func advance(nums []int) {
-	
+
 	for i := 0; i < 3; i++ {
-		if nums[i] < nums[i+1] - 1 {
+		if nums[i] < nums[i+1]-1 {
 			nums[i] += 1
 			for j := 0; j < i; j++ {
-				nums[j] = j+1
+				nums[j] = j + 1
 			}
 			return
 		}
@@ -61,11 +62,12 @@ func advance(nums []int) {
 
 	nums[len(nums)-1] += 1
 	for j := 0; j < len(nums)-1; j++ {
-		nums[j] = j+1
+		nums[j] = j + 1
 	}
 	return
 
 }
+
 /*----------------------------------------------------------------------------*/
 func getMaxSeria(m map[float64]bool) int {
 
@@ -73,25 +75,26 @@ func getMaxSeria(m map[float64]bool) int {
 	for m[float64(i)] {
 		i++
 	}
-	
-	return i-1
+
+	return i - 1
 }
+
 /*----------------------------------------------------------------------------*/
 func getSeria(vec []int) map[float64]bool {
 
-	vv := make([]int,4)
+	vv := make([]int, 4)
 
 	copy(vv, vec)
 
 	v := sort.IntSlice(vv)
 
-	vf := make([]float64,4)
+	vf := make([]float64, 4)
 
-	ord := sort.IntSlice([]int{ORD1,ORD2,ORD3})
+	ord := sort.IntSlice([]int{ORD1, ORD2, ORD3})
 
 	m := make(map[float64]bool)
 
-	ops := getComb([]int{MUL,DIV,ADD,SUB},3)
+	ops := getComb([]int{MUL, DIV, ADD, SUB}, 3)
 
 	mathutil.PermutationFirst(v)
 	for ok1 := true; ok1; ok1 = mathutil.PermutationNext(v) {
@@ -113,9 +116,10 @@ func getSeria(vec []int) map[float64]bool {
 
 	return m
 }
+
 /*----------------------------------------------------------------------------*/
 func makeCalc(ord, op []int, v []float64) float64 {
-	
+
 	result := 0.0
 
 	for i := range ord {
@@ -145,37 +149,39 @@ func makeCalc(ord, op []int, v []float64) float64 {
 
 	return result
 }
+
 /*----------------------------------------------------------------------------*/
 func makeOP(opi int, v []float64, i int) float64 { // bad function
 
 	switch opi {
-	case MUL: 
-		{ 
+	case MUL:
+		{
 			v[i] *= v[i+1]
 			v[i+1] = v[i]
 		}
-	case ADD: 
-		{ 
+	case ADD:
+		{
 			v[i] += v[i+1]
 			v[i+1] = v[i]
 		}
 	case SUB:
-		{ 
+		{
 			v[i] -= v[i+1]
 			v[i+1] = v[i]
 		}
-	default: //case DIV: 
-		if v[i+1] == 0 { 
+	default: //case DIV:
+		if v[i+1] == 0 {
 			return FAIL
 		} else {
-			v[i] /=  v[i+1]
+			v[i] /= v[i+1]
 			v[i+1] = v[i]
 		}
 	}
 
 	return v[i]
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func getComb(ops []int, n int) [][]int {
 
@@ -183,7 +189,7 @@ func getComb(ops []int, n int) [][]int {
 		return nil
 	}
 
-	result := make([][]int,0)
+	result := make([][]int, 0)
 
 	// find tail-combinations
 	for i := range ops {
@@ -204,7 +210,6 @@ func getComb(ops []int, n int) [][]int {
 			result = append(result, tmp)
 		}
 	}
-
 
 	return result
 

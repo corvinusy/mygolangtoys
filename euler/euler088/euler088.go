@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 const LIMIT = 12000
@@ -11,7 +11,7 @@ func main() {
 
 	tmpmap := make(map[int]int) // temp map for reversed data
 
-	cache := make([][][]int,UPPER) // cache with always found factor lists
+	cache := make([][][]int, UPPER) // cache with always found factor lists
 
 	for n := 1; n < UPPER; n++ {
 
@@ -33,12 +33,12 @@ func main() {
 
 			if tmpmap[k] == 0 {
 				tmpmap[k] = n
-			} 
+			}
 
 		}
 	}
 
-	delete (tmpmap, 1) // remove 1 according to task definition
+	delete(tmpmap, 1) // remove 1 according to task definition
 
 	//prepare map for summation of keys
 	summap := make(map[int]bool)
@@ -58,16 +58,19 @@ func main() {
 	fmt.Println("sum =", sum)
 
 }
+
 /*-----------------------------------------------------------------------------*/
 func getFactorLists(n int, cache [][][]int) [][]int {
 	// returns list of factor combinations
 
-	if n < 2 { return nil }
+	if n < 2 {
+		return nil
+	}
 
 	if cache[n] != nil {
 		return cache[n]
 	}
-	
+
 	// result placeholder
 	factorLists := make([][]int, 0)
 
@@ -75,7 +78,7 @@ func getFactorLists(n int, cache [][][]int) [][]int {
 	factors := make([]int, 0)
 
 	for i := 2; i <= n/2; i++ {
-		if n % i == 0 {
+		if n%i == 0 {
 			factors = append(factors, i)
 		}
 	}
@@ -85,7 +88,7 @@ func getFactorLists(n int, cache [][][]int) [][]int {
 	// find tail-subfactors for all found factors
 	for i := range factors {
 
-		tail := getFactorLists(n / factors[i], cache)
+		tail := getFactorLists(n/factors[i], cache)
 
 		if tail == nil {
 			fl := make([]int, 1)

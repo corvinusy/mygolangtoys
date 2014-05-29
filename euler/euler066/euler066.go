@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math"
 	"math/big"
 )
@@ -35,8 +35,8 @@ const LIMIT = 1e3
 func main() {
 
 	var (
-		d, n int64
-		b bool
+		d, n   int64
+		b      bool
 		period int64
 	)
 
@@ -63,42 +63,42 @@ func main() {
 
 		a = append(a, sqd)
 		pb = append(pb, 0, a[0])
-		qb = append(qb, 0, d - a[0]*a[0])
-		a = append(a, (a[0] + pb[1])/qb[1])
+		qb = append(qb, 0, d-a[0]*a[0])
+		a = append(a, (a[0]+pb[1])/qb[1])
 
 		q = append(q, big.NewInt(1), big.NewInt(a[1]))
-		p = append(p, big.NewInt(a[0]), big.NewInt(a[0]*a[1] + 1))
+		p = append(p, big.NewInt(a[0]), big.NewInt(a[0]*a[1]+1))
 
 		for n = 2; ; n++ {
-			pb = append(pb,  a[n-1]*qb[n-1] - pb[n-1] )
-			qb = append(qb, (d - pb[n]*pb[n]) / qb[n-1] )
+			pb = append(pb, a[n-1]*qb[n-1]-pb[n-1])
+			qb = append(qb, (d-pb[n]*pb[n])/qb[n-1])
 
-			a = append(a, (a[0] + pb[n])/qb[n] )
+			a = append(a, (a[0]+pb[n])/qb[n])
 
-//			p = append(p, a[n] * p[n-1] + p[n-2] )
-//			q = append(q, a[n] * q[n-1] + q[n-2] )
+			//			p = append(p, a[n] * p[n-1] + p[n-2] )
+			//			q = append(q, a[n] * q[n-1] + q[n-2] )
 
 			zp := big.NewInt(a[n])
 			zp.Mul(zp, p[n-1])
 			zp.Add(zp, p[n-2])
-			p = append(p, zp )
+			p = append(p, zp)
 
 			zq := big.NewInt(a[n])
 			zq.Mul(zp, p[n-1])
 			zq.Add(zp, p[n-2])
-			q = append(q, zq )
+			q = append(q, zq)
 
 			if period == 0 {
 				b, period = is_periodic(a, pb, qb)
 			}
-			if b && period % 2 == 0 {
+			if b && period%2 == 0 {
 				if zres.Cmp(p[n-2]) == -1 {
 					fmt.Println(d, p[n-2], q[n-2])
 					zres = p[n-2]
 				}
 				break
-			} 
-			if b && (period % 2 != 0) && n == period*2  {
+			}
+			if b && (period%2 != 0) && n == period*2 {
 				if zres.Cmp(p[n-1]) == -1 {
 					fmt.Println(d, p[n-1], q[n-1])
 					zres = p[n-1]
@@ -107,15 +107,16 @@ func main() {
 			}
 
 		}
-		
+
 	}
 	fmt.Println("result:", zres)
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_periodic(a, pb, qb []int64) (bool, int64) {
-	for i:=2; i < len(a); i++ {
+	for i := 2; i < len(a); i++ {
 		if (a[1] == a[i]) && (qb[1] == qb[i]) && (pb[1] == pb[i]) {
-			return true, int64(i-1)
+			return true, int64(i - 1)
 		}
 	}
 	return false, 0

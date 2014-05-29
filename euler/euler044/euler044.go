@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
@@ -22,9 +22,9 @@ func main() {
 
 	for n = 1; n < LIMIT/2; n++ {
 		for m = n + 1; m < LIMIT/2; m++ {
-			if pmap[pn(m) - pn(n)] && pmap[pn(m)+pn(n)] {
+			if pmap[pn(m)-pn(n)] && pmap[pn(m)+pn(n)] {
 				fmt.Println(pn(n), pn(m))
-				if pn(m) - pn(n) < cur {
+				if pn(m)-pn(n) < cur {
 					cur = pn(m) - pn(n)
 				}
 			}
@@ -32,7 +32,8 @@ func main() {
 	}
 	fmt.Println(cur)
 }
+
 /*-----------------------------------------------------------------------------*/
 func pn(n uint) uint {
-	return (n * (3 * n - 1)) >> 1
+	return (n * (3*n - 1)) >> 1
 }

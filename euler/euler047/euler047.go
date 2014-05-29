@@ -7,21 +7,21 @@ import (
 )
 
 func main() {
-	
+
 	var (
 		i uint64
 	)
-	
+
 	const LIMIT = 1e6
 
 	primes := make([]uint64, 0, LIMIT)
 	prmap := make(map[uint64]bool, LIMIT)
 
-	time1 := time.Now();
+	time1 := time.Now()
 
 	create_primes_atkin(LIMIT, &primes, &prmap)
 
-	SIZE := uint64(len(primes)-1)
+	SIZE := uint64(len(primes) - 1)
 
 	for i = 644; i < primes[SIZE]; i++ {
 		if divcount(i, primes) != 4 {
@@ -41,53 +41,55 @@ func main() {
 		}
 	}
 }
+
 /*-----------------------------------------------------------------------------*/
 func divcount(num uint64, primes []uint64) uint64 {
 	var n, count uint64
-	
+
 	count = 0
 	for n = 0; primes[n] <= num; n++ {
-		if num % primes[n] == 0 {
+		if num%primes[n] == 0 {
 			count++
 			num /= primes[n]
 		}
 	}
 	return count
 }
+
 /*-----------------------------------------------------------------------------*/
-func create_primes_atkin (limit uint64, primes *([]uint64), prmap *(map[uint64]bool))  {
+func create_primes_atkin(limit uint64, primes *([]uint64), prmap *(map[uint64]bool)) {
 
 	var sqr_lim uint64 = uint64(math.Sqrt(float64(limit)))
 
 	var sieve_nums = make([]bool, limit+1)
 
-	var i, x, y, n uint64;
+	var i, x, y, n uint64
 
-	for i = 5; i <= limit ; i++ {
-		sieve_nums[i] = false;
+	for i = 5; i <= limit; i++ {
+		sieve_nums[i] = false
 	}
 
 	sieve_nums[2] = true
 	sieve_nums[3] = true
-	
+
 	for x = 1; x <= sqr_lim; x++ {
 		for y = 1; y <= sqr_lim; y++ {
 
-			n = 4 * x * x + y * y
-			if (n <= limit) && ( (n % 12 == 1) || (n % 12 == 5) ) {
+			n = 4*x*x + y*y
+			if (n <= limit) && ((n%12 == 1) || (n%12 == 5)) {
 				sieve_nums[n] = !sieve_nums[n]
 			}
 
-			n = n - x * x
-			if (n <= limit) && (n % 12 == 7) {
+			n = n - x*x
+			if (n <= limit) && (n%12 == 7) {
 				sieve_nums[n] = !sieve_nums[n]
 			}
 
-			n = n - 2 * y * y
-			if (x > y) && (n <= limit) && (n % 12 == 11) {
+			n = n - 2*y*y
+			if (x > y) && (n <= limit) && (n%12 == 11) {
 				sieve_nums[n] = !sieve_nums[n]
 			}
-    	}
+		}
 	}
 
 	for i = 5; i <= sqr_lim; i++ {
@@ -98,14 +100,15 @@ func create_primes_atkin (limit uint64, primes *([]uint64), prmap *(map[uint64]b
 			}
 		}
 	}
-	
+
 	for i = 0; i <= limit; i++ {
 		if sieve_nums[i] {
 			*primes = append(*primes, i)
 			(*prmap)[i] = true
-		} 
+		}
 	}
 
 	return
 }
+
 /*-----------------------------------------------------------------------------*/

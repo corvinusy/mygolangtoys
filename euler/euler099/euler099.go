@@ -1,13 +1,12 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
-	"strconv"
 	"math"
+	"strconv"
+	"strings"
 )
-
 
 // x ** y > a ** b
 // y > b * log_x(a)
@@ -19,19 +18,18 @@ import (
 const SIZE = 1000
 
 type Node struct {
-	row int
-	col int
-	value int
+	row    int
+	col    int
+	value  int
 	weight int
 }
-
 
 func main() {
 
 	var (
-		strs []string
+		strs    []string
 		strnums []string
-		tmp int64
+		tmp     int64
 	)
 
 	//read file into source
@@ -43,26 +41,26 @@ func main() {
 
 	source := strings.Trim(string(content), "\n")
 
-	strs = strings.Split(source,"\n")
-	
+	strs = strings.Split(source, "\n")
+
 	pair := make([][2]int64, SIZE)
 
 	for i, s := range strs {
 		strnums = strings.Split(s, ",")
-		for j, sn := range strnums  {
+		for j, sn := range strnums {
 			tmp, _ = strconv.ParseInt(sn, 10, 0)
 			pair[i][j] = int64(tmp)
 		}
 	}
-/*
-    //check data
-	for i, _ := range pair {
-		for j, _ := range pair[i] {
-			fmt.Printf("%7d", pair[i][j])
-		}
-		fmt.Println()
-	}
-*/
+	/*
+	       //check data
+	   	for i, _ := range pair {
+	   		for j, _ := range pair[i] {
+	   			fmt.Printf("%7d", pair[i][j])
+	   		}
+	   		fmt.Println()
+	   	}
+	*/
 
 	//	nMax := a * log10(b)
 

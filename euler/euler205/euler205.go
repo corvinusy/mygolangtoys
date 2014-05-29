@@ -1,14 +1,14 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
 
-	maskPete := []int{1,1,1,1,1,1,1,1,1}
+	maskPete := []int{1, 1, 1, 1, 1, 1, 1, 1, 1}
 
-	maskColin := []int{1,1,1,1,1,1}
+	maskColin := []int{1, 1, 1, 1, 1, 1}
 
 	peteMap := make([]int, 40)
 	colinMap := make([]int, 40)
@@ -49,9 +49,10 @@ func main() {
 
 	fmt.Println(win, sumPete*sumColin)
 
-	fmt.Println(float64(win)/float64(sumPete*sumColin))
+	fmt.Println(float64(win) / float64(sumPete*sumColin))
 
 }
+
 /*----------------------------------------------------------------------------*/
 func advancePete(mask []int) bool {
 
@@ -67,17 +68,19 @@ func advancePete(mask []int) bool {
 
 	return false
 }
+
 /*----------------------------------------------------------------------------*/
 func getCombo(mask []int) int {
 
 	sum := 0
-	
+
 	for _, m := range mask {
 		sum += m
 	}
 
 	return sum
 }
+
 /*----------------------------------------------------------------------------*/
 func advanceColin(mask []int) bool {
 

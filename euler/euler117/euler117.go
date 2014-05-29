@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
@@ -16,19 +16,20 @@ func main() {
 
 	res := big.NewInt(0)
 
-	for i4 := int64(SIZE/4); i4 >= 0 ; i4-- {
-		for i3 := int64((SIZE - i4*4)/3); i3 >= 0 ; i3-- {
-			for i2 := int64((SIZE - i4*4 - i3*3)/2); i2 >= 0 ; i2-- {
+	for i4 := int64(SIZE / 4); i4 >= 0; i4-- {
+		for i3 := int64((SIZE - i4*4) / 3); i3 >= 0; i3-- {
+			for i2 := int64((SIZE - i4*4 - i3*3) / 2); i2 >= 0; i2-- {
 				i1 := SIZE - i4*4 - i3*3 - i2*2
 				res.Add(res, comb(i4+i3+i2+i1, i4, i3, i2, i1))
-			//	fmt.Println( i4, i3, i2, i1, "\tcomb =", comb(i4+i3+i2+i1, i4, i3, i2, i1))
+				//	fmt.Println( i4, i3, i2, i1, "\tcomb =", comb(i4+i3+i2+i1, i4, i3, i2, i1))
 			}
 		}
 	}
 
 	fmt.Println(res)
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func comb(n, m4, m3, m2, m1 int64) *big.Int {
 
@@ -60,4 +61,5 @@ func comb(n, m4, m3, m2, m1 int64) *big.Int {
 	return z
 
 }
+
 /*----------------------------------------------------------------------------*/

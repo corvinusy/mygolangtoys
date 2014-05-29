@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
@@ -9,25 +9,25 @@ func main() {
 	sum := 0
 	day1 := 1 // monday = 0, sunday = 6
 
-	for i:=1901; i < 2001; i++ {
-		sum += count_year_fmsundays(i, &day1);
+	for i := 1901; i < 2001; i++ {
+		sum += count_year_fmsundays(i, &day1)
 	}
 
-	fmt.Println(sum);
+	fmt.Println(sum)
 }
+
 /*-----------------------------------------------------------------------------*/
 func count_year_fmsundays(year int, day1 *int) int {
 
-
 	is_leap := false
 	maxday := 364
-	if (year % 4 == 0) && (year != 1900) {
+	if (year%4 == 0) && (year != 1900) {
 		is_leap = true
 		maxday++
 	}
-	
+
 	res := 0
-	for i := 0; i <= maxday ; i++ {
+	for i := 0; i <= maxday; i++ {
 		if is_first(i, is_leap) && is_sunday(i, *day1) {
 			res++
 		}
@@ -36,10 +36,11 @@ func count_year_fmsundays(year int, day1 *int) int {
 		*day1 = (*day1 + 2) % 7
 		fmt.Println(year, res)
 	} else {
-		*day1 = (*day1 + 1) % 7		
+		*day1 = (*day1 + 1) % 7
 	}
 	return res
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_first(day int, is_leap bool) bool {
 	if is_leap {
@@ -52,7 +53,8 @@ func is_first(day int, is_leap bool) bool {
 			(day == 304) || (day == 334)
 	}
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_sunday(day int, day1 int) bool {
-	return (day + 1 + day1) % 7 == 0
+	return (day+1+day1)%7 == 0
 }

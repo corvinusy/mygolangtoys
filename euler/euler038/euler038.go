@@ -1,17 +1,17 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"strconv"
 	"strings"
-//	"runtime"
+	//	"runtime"
 )
 
 const LIMIT = 1e5
 
 func main() {
 
-//	runtime.GOMAXPROCS(2)
+	//	runtime.GOMAXPROCS(2)
 
 	c := make(chan string)
 	res := make(chan int64)
@@ -21,11 +21,12 @@ func main() {
 
 	fmt.Println(<-res)
 }
+
 /*-----------------------------------------------------------------------------*/
 func generate(c chan<- string) {
 	var (
 		i, n int64
-		str string
+		str  string
 	)
 
 	for n = 1; n < LIMIT; n++ {
@@ -42,15 +43,16 @@ func generate(c chan<- string) {
 	c <- "stop"
 	return
 }
+
 /*-----------------------------------------------------------------------------*/
 func process(c <-chan string, res chan<- int64) {
-var (
-	sum, finsum int64
-	str string
-)
+	var (
+		sum, finsum int64
+		str         string
+	)
 	finsum = 0
 	for {
-		str = <- c
+		str = <-c
 
 		if str == "stop" {
 			break
@@ -65,9 +67,10 @@ var (
 	}
 	res <- finsum
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_pandigital(s *string) bool {
-	for b := '1'; b <='9'; b++ {
+	for b := '1'; b <= '9'; b++ {
 		if strings.IndexRune(*s, b) == -1 {
 			return false
 		}

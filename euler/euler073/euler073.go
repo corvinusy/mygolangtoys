@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
@@ -17,7 +17,7 @@ func main() {
 
 	// dirty brute force
 	for i = 4; i <= LIMIT; i++ {
-		for j = i / 3 ; j <= i / 2 ; j++ {
+		for j = i / 3; j <= i/2; j++ {
 			if gcd(i, j) != 1 {
 				continue
 			} else {
@@ -30,10 +30,11 @@ func main() {
 	}
 	fmt.Println("LIMIT = ", LIMIT, "result = ", count)
 }
+
 /*-----------------------------------------------------------------------------*/
 func gcd(a, b int64) int64 {
 	for b != 0 {
-		a, b = b, a % b
+		a, b = b, a%b
 	}
 	return a
 }

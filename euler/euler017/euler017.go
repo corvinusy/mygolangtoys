@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	let[8] = len("eight")
 	let[9] = len("nine")
 	let[10] = len("ten")
-	
+
 	let[11] = len("eleven")
 	let[12] = len("twelve")
 	let[13] = len("thirteen")
@@ -41,19 +41,19 @@ func main() {
 	lethundred := len("hundred")
 	letand := len("and")
 
-	for i := 21; i < 100; i++  {
+	for i := 21; i < 100; i++ {
 
-		if i % 10 != 0 {
-			let[i] = let[i - i % 10] + let[i % 10]
+		if i%10 != 0 {
+			let[i] = let[i-i%10] + let[i%10]
 		}
 	}
 
 	for i := 100; i < 1000; i++ {
 
-		if i % 100 == 0 {
-			let[i] = let[i / 100] + lethundred
+		if i%100 == 0 {
+			let[i] = let[i/100] + lethundred
 		} else {
-			let[i] = let[i / 100] + lethundred + letand + let[i % 100]
+			let[i] = let[i/100] + lethundred + letand + let[i%100]
 		}
 
 	}
@@ -65,9 +65,7 @@ func main() {
 
 		sum = sum + let[i]
 	}
-	
+
 	fmt.Println(sum)
 
 }
-
-

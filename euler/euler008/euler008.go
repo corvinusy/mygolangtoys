@@ -5,9 +5,8 @@ import (
 	"strconv"
 )
 
-func main () {
-	var src_str string = 
-		`73167176531330624919225119674426574742355349194934
+func main() {
+	var src_str string = `73167176531330624919225119674426574742355349194934
 96983520312774506326239578318016984801869478851843
 85861560789112949495459501737958331952853208805511
 12540698747158523863050715693290963295227443043557
@@ -32,7 +31,7 @@ func main () {
 	var product int64
 	var product2 int64
 
-	for i:=0; i < len(src_str) - 5; i++ {
+	for i := 0; i < len(src_str)-5; i++ {
 		product = 1
 		for j := 0; j < 5; j++ {
 			product2, _ = strconv.ParseInt(string(src_str[i+j]), 10, 64)

@@ -1,8 +1,8 @@
 package main
 
 import (
-    "fmt"
-    "math/big"
+	"fmt"
+	"math/big"
 )
 
 // Partition Fuction P
@@ -19,51 +19,51 @@ const LIMIT = 100001
 
 func main() {
 
-    cache := make([]*big.Int, LIMIT+1)
+	cache := make([]*big.Int, LIMIT+1)
 
-    cache[0] = big.NewInt(0)
-    cache[1] = big.NewInt(1)
+	cache[0] = big.NewInt(0)
+	cache[1] = big.NewInt(1)
 
-    for i := 100; i <= LIMIT; i++ {
+	for i := 100; i <= LIMIT; i++ {
 
-        s := pn(i, cache).String()
+		s := pn(i, cache).String()
 
-        if s[len(s)-6:] == "000000" {
-            fmt.Println(i-1, s)
-            break
-        }
+		if s[len(s)-6:] == "000000" {
+			fmt.Println(i-1, s)
+			break
+		}
 
-    }
+	}
 
 }
 
 /*-----------------------------------------------------------------------------*/
 func pent(k int) int {
-    return k * (3*k - 1) / 2 // 1, 5, 12
+	return k * (3*k - 1) / 2 // 1, 5, 12
 }
 
 /*-----------------------------------------------------------------------------*/
 func pn(n int, cache []*big.Int) *big.Int {
 
-    if n <= 0 {
-        return big.NewInt(0)
-    }
+	if n <= 0 {
+		return big.NewInt(0)
+	}
 
-    if cache[n] != nil {
-        return cache[n]
-    }
+	if cache[n] != nil {
+		return cache[n]
+	}
 
-    z := big.NewInt(0)
+	z := big.NewInt(0)
 
-    for k := 1; pent(k) < n; k += 2 {
+	for k := 1; pent(k) < n; k += 2 {
 
-        z.Add(z, pn(n-pent(k), cache))
-        z.Add(z, pn(n-pent(-k), cache))
-        z.Sub(z, pn(n-pent(k+1), cache))
-        z.Sub(z, pn(n-pent(-k-1), cache))
+		z.Add(z, pn(n-pent(k), cache))
+		z.Add(z, pn(n-pent(-k), cache))
+		z.Sub(z, pn(n-pent(k+1), cache))
+		z.Sub(z, pn(n-pent(-k-1), cache))
 
-    }
+	}
 
-    cache[n] = z
-    return z
+	cache[n] = z
+	return z
 }

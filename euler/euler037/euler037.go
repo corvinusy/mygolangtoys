@@ -3,15 +3,15 @@ package main
 import (
 	"fmt"
 	"math"
-	"time"
 	"strconv"
+	"time"
 )
 
 func main() {
-	
+
 	var sum int64 = 0
 	primes := make([]int64, 0, 1e6)
-	time1 := time.Now();
+	time1 := time.Now()
 
 	prime_list(2e6, &primes)
 
@@ -22,43 +22,44 @@ func main() {
 		}
 	}
 
-	time2 := time.Since(time1);
+	time2 := time.Since(time1)
 	fmt.Println(sum, "\n", time2)
 }
+
 /*------------------------------------------------------*/
-func prime_list (limit int64, primes *([]int64)) {
+func prime_list(limit int64, primes *([]int64)) {
 
 	var sqr_lim int64 = int64(math.Sqrt(float64(limit)))
 
 	var sieve_nums = make([]bool, limit+1)
 
-	var i, x, y, n int64;
+	var i, x, y, n int64
 
-	for i = 5; i <= limit ; i++ {
-		sieve_nums[i] = false;
+	for i = 5; i <= limit; i++ {
+		sieve_nums[i] = false
 	}
 
 	sieve_nums[2] = true
 	sieve_nums[3] = true
-	
+
 	for x = 1; x <= sqr_lim; x++ {
 		for y = 1; y <= sqr_lim; y++ {
 
-			n = 4 * x * x + y * y
-			if (n <= limit) && ( (n % 12 == 1) || (n % 12 == 5) ) {
+			n = 4*x*x + y*y
+			if (n <= limit) && ((n%12 == 1) || (n%12 == 5)) {
 				sieve_nums[n] = !sieve_nums[n]
 			}
 
-			n = n - x * x
-			if (n <= limit) && (n % 12 == 7) {
+			n = n - x*x
+			if (n <= limit) && (n%12 == 7) {
 				sieve_nums[n] = !sieve_nums[n]
 			}
 
-			n = n - 2 * y * y
-			if (x > y) && (n <= limit) && (n % 12 == 11) {
+			n = n - 2*y*y
+			if (x > y) && (n <= limit) && (n%12 == 11) {
 				sieve_nums[n] = !sieve_nums[n]
 			}
-    	}
+		}
 	}
 
 	for i = 5; i <= sqr_lim; i++ {
@@ -69,7 +70,7 @@ func prime_list (limit int64, primes *([]int64)) {
 			}
 		}
 	}
-	
+
 	for i = 0; i <= limit; i++ {
 		if sieve_nums[i] {
 			*primes = append(*primes, i)
@@ -78,18 +79,19 @@ func prime_list (limit int64, primes *([]int64)) {
 
 	return
 }
+
 /*------------------------------------------------------*/
 func is_round_prime(id int, primes *[]int64) bool {
 	var str string = strconv.FormatInt((*primes)[id], 10)
 	var r, l int64
 	var r_prime, l_prime bool
 
-	for i:=1; i < len(str); i++ {
+	for i := 1; i < len(str); i++ {
 		r, l = split_num(str, i)
 
 		r_prime = false
 		for j := 0; j < id; j++ {
-			if (r == (*primes)[j])  {
+			if r == (*primes)[j] {
 				r_prime = true
 				break
 			}
@@ -100,7 +102,7 @@ func is_round_prime(id int, primes *[]int64) bool {
 
 		l_prime = false
 		for j := 0; j < id; j++ {
-			if (l == (*primes)[j])  {
+			if l == (*primes)[j] {
 				l_prime = true
 				break
 			}
@@ -111,6 +113,7 @@ func is_round_prime(id int, primes *[]int64) bool {
 	}
 	return true
 }
+
 /*------------------------------------------------------*/
 func split_num(s string, c int) (int64, int64) {
 	r, _ := strconv.ParseInt(s[:c], 10, 0)

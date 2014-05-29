@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/cznic/mathutil"
 )
 
@@ -18,16 +18,16 @@ func main() {
 
 	sum := uint64(0)
 
-	for r = LIMIT-1; r > LIMIT-3; r-- { // r - number of digit repeats
+	for r = LIMIT - 1; r > LIMIT-3; r-- { // r - number of digit repeats
 		for d = 0; d < 10; d++ { // current digit
 			smap := make(map[uint64]bool)
 			masks := formMasks(r) //maskslice like 1111111110
 			for _, mask := range masks {
 				numbers := formNumbers(mask, r, d)
-				for _, n = range numbers { 
+				for _, n = range numbers {
 					if mathutil.IsPrimeUint64(n) {
 						if rmap[d] == 0 {
-						 rmap[d] = r
+							rmap[d] = r
 						}
 						if rmap[d] == r {
 							fmt.Println(r, d, n)
@@ -52,13 +52,13 @@ func formMasks(r uint64) [][LIMIT]uint8 {
 	a := make([][LIMIT]uint8, 0)
 
 	var m, count uint64
-	
-	for m = 0; m <= 1 << LIMIT; m++ {
+
+	for m = 0; m <= 1<<LIMIT; m++ {
 		q := m
 		var aa [LIMIT]uint8
 		count = 0
 		for i := range aa {
-			if q & 1 != 0 {
+			if q&1 != 0 {
 				count += 1
 				aa[i] = 1
 			}
@@ -71,42 +71,47 @@ func formMasks(r uint64) [][LIMIT]uint8 {
 
 	return a
 }
+
 /*----------------------------------------------------------------------------*/
 func formNumbers(mask [LIMIT]uint8, r, d uint64) []uint64 {
-	
+
 	var k, n uint64
-	
+
 	a := make([]uint64, 0)
 
 	maxnum := 1
 
-	for ;r < LIMIT; r++ {
+	for ; r < LIMIT; r++ {
 		maxnum *= 10
 	}
-	
+
 	minnum := maxnum / 10
-	if minnum == 1 { minnum = 0 }
+	if minnum == 1 {
+		minnum = 0
+	}
 
 	for i := minnum; i < maxnum; i++ {
 		isContainD := false
 		k = uint64(i)
 		for k > 0 {
-			if k % 10 == d {
+			if k%10 == d {
 				isContainD = true
-				break 
+				break
 			}
 			k /= 10
 		}
 
-		if isContainD {continue}
+		if isContainD {
+			continue
+		}
 
 		k = uint64(i)
 		n = 0
 		for i := range mask {
 			if mask[i] == 1 {
-				n = n * 10 + d
+				n = n*10 + d
 			} else {
-				n = n * 10 + k % 10
+				n = n*10 + k%10
 				k /= 10
 			}
 		}
@@ -119,4 +124,5 @@ func formNumbers(mask [LIMIT]uint8, r, d uint64) []uint64 {
 	return a
 
 }
+
 /*-----------------------------------------------------------------------------*/

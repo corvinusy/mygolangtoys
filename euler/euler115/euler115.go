@@ -1,9 +1,8 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
-
 
 const LIMIT = 1e6
 const TSIZE = 50
@@ -21,6 +20,7 @@ func main() {
 	}
 
 }
+
 /*----------------------------------------------------------------------------*/
 func comb(n, m int, cache map[int]int) int {
 
@@ -36,7 +36,7 @@ func comb(n, m int, cache map[int]int) int {
 
 	for pos := 0; pos <= m-n; pos++ {
 		for blen := n; blen <= m-pos; blen++ {
-			result += comb(n, m - pos - blen - 1, cache)
+			result += comb(n, m-pos-blen-1, cache)
 		}
 	}
 

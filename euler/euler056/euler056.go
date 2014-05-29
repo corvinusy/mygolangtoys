@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
@@ -10,16 +10,16 @@ func main() {
 	var i, j, zsum, tmp int64
 	const LIMIT = 100
 
-	x := new (big.Int)
-	y := new (big.Int)
-	z := new (big.Int)
+	x := new(big.Int)
+	y := new(big.Int)
+	z := new(big.Int)
 	zsum = 1
 
 	for i = LIMIT - 1; i > 1; i-- {
-		for j =LIMIT ; j > 1; j-- {
+		for j = LIMIT; j > 1; j-- {
 			x.SetInt64(i)
 			y.SetInt64(j)
-			z.Exp(x, y, nil);
+			z.Exp(x, y, nil)
 			if len(z.String()) < 100 {
 				break
 			}
@@ -33,6 +33,7 @@ func main() {
 
 	fmt.Println(zsum)
 }
+
 /*-----------------------------------------------------------------------------*/
 func getzsum(s string) int64 {
 	var result int64 = 0
@@ -41,4 +42,3 @@ func getzsum(s string) int64 {
 	}
 	return result
 }
-

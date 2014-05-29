@@ -1,7 +1,7 @@
 package main
 
 import (
- "fmt"
+	"fmt"
 )
 
 func main() {
@@ -11,14 +11,14 @@ func main() {
 	cur_i = 1
 	cur_count = 0
 
-	for i = 2; i < 1e6 ; i++ {
+	for i = 2; i < 1e6; i++ {
 		count = 0
 		n = i
 		for n != 1 {
-			if n % 2 == 0 {
+			if n%2 == 0 {
 				n /= 2
 			} else {
-				n = 3 * n + 1
+				n = 3*n + 1
 			}
 			count++
 		}

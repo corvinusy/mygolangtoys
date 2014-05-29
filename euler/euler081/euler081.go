@@ -1,28 +1,27 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 const SIZE = 81
 
 type Node struct {
-	row int
-	col int
-	value int
+	row    int
+	col    int
+	value  int
 	weight int
 }
-
 
 func main() {
 
 	var (
-		strs []string
+		strs    []string
 		strnums []string
-		tmp int64
+		tmp     int64
 	)
 
 	//read file into source
@@ -47,39 +46,38 @@ func main() {
 		}
 	}
 
-	strs = strings.Split(source,"\n")
+	strs = strings.Split(source, "\n")
 
 	for i, s := range strs {
 		strnums = strings.Split(s, ",")
-		for j, sn := range strnums  {
+		for j, sn := range strnums {
 			tmp, _ = strconv.ParseInt(sn, 10, 0)
 			tree[i][j].value = int(tmp)
 		}
 	}
 
-/*  //check data
+	/*  //check data
 	for i, _ := range tree {
 		for j, _ := range tree[i] {
 			fmt.Printf("%5d", tree[i][j].value)
 		}
 		fmt.Println()
 	}
-*/	
+	*/
 
 	// low row
-	for j := SIZE-2; j >= 0; j-- {
+	for j := SIZE - 2; j >= 0; j-- {
 		tree[SIZE-2][j].weight = tree[SIZE-2][j+1].value + tree[SIZE-2][j+1].weight
 	}
 
 	// right col
-	for i := SIZE-2; i >= 0; i-- {
+	for i := SIZE - 2; i >= 0; i-- {
 		tree[i][SIZE-2].weight = tree[i+1][SIZE-2].value + tree[i+1][SIZE-2].weight
 	}
 
-
 	// other members
-	for i := SIZE-3; i >= 0; i-- {
-		for j := SIZE-3; j >= 0; j-- {
+	for i := SIZE - 3; i >= 0; i-- {
+		for j := SIZE - 3; j >= 0; j-- {
 
 			t1 := tree[i+1][j].value + tree[i+1][j].weight
 			t2 := tree[i][j+1].value + tree[i][j+1].weight

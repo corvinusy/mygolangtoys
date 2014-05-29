@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
 func main() {
-	
+
 	const (
 		LIMIT = 9
 	)
@@ -22,7 +22,7 @@ func main() {
 	count := 1
 
 	for i = 2; i <= LIMIT; i++ {
-		for n = 1; true ; n++ {
+		for n = 1; true; n++ {
 			x.SetInt64(i)
 			y.SetInt64(n)
 			d = int64(len(z.Exp(x, y, nil).String()))

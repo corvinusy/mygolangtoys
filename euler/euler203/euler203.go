@@ -1,9 +1,9 @@
 package main
 
 import (
-    "fmt"
-	"math/big"
+	"fmt"
 	"github.com/cznic/mathutil"
+	"math/big"
 )
 
 const LIMIT = 51
@@ -14,7 +14,7 @@ func main() {
 		n, k uint64
 	)
 
-	cache := makeCache(LIMIT-1)
+	cache := makeCache(LIMIT - 1)
 
 	fmt.Println("cache prepared")
 
@@ -23,7 +23,7 @@ func main() {
 	usum := uint64(0)
 
 	for n = 1; n < LIMIT; n++ {
-		for k  = 1; k <= n; k++ {
+		for k = 1; k <= n; k++ {
 
 			q := binomial(n, k)
 
@@ -43,8 +43,9 @@ func main() {
 	}
 
 	fmt.Println("limit =", LIMIT, "sum = ", usum)
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func makeCache(limit uint64) []uint64 {
 
@@ -56,9 +57,10 @@ func makeCache(limit uint64) []uint64 {
 
 	return cache
 }
+
 /*----------------------------------------------------------------------------*/
 func binomial(n, k uint64) uint64 {
-	
+
 	z := new(big.Int)
 
 	z.Binomial(int64(n), int64(k))
@@ -68,11 +70,12 @@ func binomial(n, k uint64) uint64 {
 	return res
 
 }
-/*----------------------------------------------------------------------------*/
-func isSquareFree (n uint64, cache []uint64) bool {
 
-	for _, ii := range cache  {
-		if n % ii*ii == 0 {
+/*----------------------------------------------------------------------------*/
+func isSquareFree(n uint64, cache []uint64) bool {
+
+	for _, ii := range cache {
+		if n%ii*ii == 0 {
 			return false
 		}
 	}

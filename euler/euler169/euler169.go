@@ -1,16 +1,15 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
-	
+
 	fmt.Printl(f(10))
 }
+
 /*----------------------------------------------------------------------------*/
 func f(n int) int {
-	
-
 
 }

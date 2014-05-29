@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 /*  Herons S = sqrt(p(p-a)(p-b)(p-c)
@@ -17,48 +17,73 @@ func main() {
 
 	sum = 0
 
-	i = 3; j = 1
+	i = 3
+	j = 1
 
-	for  {
+	for {
 
-		if 3*i - 1 > LIMIT {
+		if 3*i-1 > LIMIT {
 			break
 		}
 
-		s1 = (3*i - 1) * (i+1)
+		s1 = (3*i - 1) * (i + 1)
 
 		switch {
-		case s1 > j*j : {j++; continue}
+		case s1 > j*j:
+			{
+				j++
+				continue
+			}
 
-		case s1 < j*j : {i++; continue}
+		case s1 < j*j:
+			{
+				i++
+				continue
+			}
 
-		case s1 == j*j : {sum += 3*i - 1; i++ }
+		case s1 == j*j:
+			{
+				sum += 3*i - 1
+				i++
+			}
 
 		}
 	}
 
-	i = 3; j = 1
+	i = 3
+	j = 1
 
-	for  {
+	for {
 
-		if 3*i + 1 > LIMIT {
+		if 3*i+1 > LIMIT {
 			break
 		}
 
 		s1 = (3*i + 1) * (i - 1)
 
 		switch {
-		case s1 > j*j : {j++; continue}
+		case s1 > j*j:
+			{
+				j++
+				continue
+			}
 
-		case s1 < j*j : {i++; continue}
+		case s1 < j*j:
+			{
+				i++
+				continue
+			}
 
-		case s1 == j*j : {sum += 3*i + 1; i++ }
+		case s1 == j*j:
+			{
+				sum += 3*i + 1
+				i++
+			}
 
 		}
 
 	}
 
-
 	fmt.Println(sum)
-	
+
 }

@@ -1,12 +1,11 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
 func main() {
-	
 
 	sum := big.NewInt(0)
 	f1 := new(big.Int)
@@ -21,6 +20,7 @@ func main() {
 	}
 
 	fmt.Println(sum.String()[len(sum.String())-10:])
-	
+
 }
+
 /*-----------------------------------------------------------------------------*/

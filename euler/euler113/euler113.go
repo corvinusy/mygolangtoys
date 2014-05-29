@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
@@ -19,7 +19,7 @@ func main() {
 
 	z1.Add(z1, z2)
 
-	z2.SetInt64(LIMIT*10)
+	z2.SetInt64(LIMIT * 10)
 
 	z1.Sub(z1, z2)
 	z1.Sub(z1, big.NewInt(1))

@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"time"
 )
 
@@ -11,15 +11,15 @@ func main() {
 
 	var (
 		ratio, res_ratio float64 = 1, LIMIT
-		res_n int = 1
+		res_n            int     = 1
 	)
 
-	var tots [LIMIT+1]int
+	var tots [LIMIT + 1]int
 
 	t1 := time.Now()
 
 	// prepare totient_sieve
-	for i := 1; i <= LIMIT ; i++ {
+	for i := 1; i <= LIMIT; i++ {
 		tots[i] = i
 	}
 
@@ -46,20 +46,21 @@ func main() {
 
 	return
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_permutation(n1, n2 int) bool {
-	d := [...]int{0,0,0,0,0,0,0,0,0,0}
+	d := [...]int{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 	for n1 > 0 {
-		d[n1 % 10]++
+		d[n1%10]++
 		n1 /= 10
 	}
 
 	for n2 > 0 {
-		d[n2 % 10]--
+		d[n2%10]--
 		n2 /= 10
 	}
-	
+
 	for _, b := range d {
 		if b != 0 {
 			return false

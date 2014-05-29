@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"strconv"
 )
 
@@ -17,8 +17,6 @@ func main() {
 		s = s + strconv.FormatInt(i, 10)
 	}
 
-	fmt.Println((s[1]-'0') * (s[10]-'0') * (s[100]-'0') * (s[1e3]-'0') * (s[1e4]-'0') * (s[1e5]-'0') * (s[1e6]-'0'))
+	fmt.Println((s[1] - '0') * (s[10] - '0') * (s[100] - '0') * (s[1e3] - '0') * (s[1e4] - '0') * (s[1e5] - '0') * (s[1e6] - '0'))
 
 }
-
-

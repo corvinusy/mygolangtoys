@@ -1,10 +1,10 @@
 package main
 
 import (
-    "fmt"
-    "io/ioutil"
+	"fmt"
+	"io/ioutil"
 	"strconv"
-    "strings"
+	"strings"
 )
 
 type Point struct {
@@ -18,22 +18,21 @@ type Triangle struct {
 	c Point
 }
 
-
 func main() {
 
-    //read file into source
+	//read file into source
 
-    content, err := ioutil.ReadFile("euler102/triangles.txt")
-    if err != nil {
-        panic("File not read")
-    }
+	content, err := ioutil.ReadFile("euler102/triangles.txt")
+	if err != nil {
+		panic("File not read")
+	}
 
-    source := strings.Trim(string(content), "\n")
+	source := strings.Trim(string(content), "\n")
 
-    lines := strings.Split(source, "\n") // 
+	lines := strings.Split(source, "\n") //
 
-    //create array and init it
-    ts := make([]Triangle, 0)
+	//create array and init it
+	ts := make([]Triangle, 0)
 
 	for _, line := range lines {
 		var t Triangle
@@ -48,7 +47,7 @@ func main() {
 	}
 
 	count := 0
-   //check data
+	//check data
 	for _, t := range ts {
 		p := Point{0, 0}
 		if pt_inside(p, t.a, t.b, t.c) {
@@ -60,20 +59,24 @@ func main() {
 
 	return
 }
+
 /*-----------------------------------------------------------------------------*/
 func cross_product(a, b Point) Point {
 	return Point{0, a.x*b.y - a.y*b.x}
 }
+
 /*-----------------------------------------------------------------------------*/
 func dot_product(a, b Point) int {
 	return a.x*b.x + a.y*b.y
 }
+
 /*-----------------------------------------------------------------------------*/
 func point_sub(a, b Point) Point {
 	return Point{a.x - b.x, a.y - b.y}
 }
+
 /*-----------------------------------------------------------------------------*/
-func same_side (p1, p2, a, b Point) bool {
+func same_side(p1, p2, a, b Point) bool {
 	cp1 := cross_product(point_sub(b, a), point_sub(p1, a))
 	cp2 := cross_product(point_sub(b, a), point_sub(p2, a))
 	if dot_product(cp1, cp2) >= 0 {
@@ -81,6 +84,7 @@ func same_side (p1, p2, a, b Point) bool {
 	}
 	return false
 }
+
 /*-----------------------------------------------------------------------------*/
 func pt_inside(p, a, b, c Point) bool {
 	if same_side(p, a, b, c) && same_side(p, b, a, c) &&

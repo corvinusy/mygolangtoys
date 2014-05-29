@@ -1,28 +1,27 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 const SIZE = 80
 
 type Node struct {
-	row int
-	col int
-	value int
+	row    int
+	col    int
+	value  int
 	weight int
 }
-
 
 func main() {
 
 	var (
-		strs []string
+		strs    []string
 		strnums []string
-		tmp int64
+		tmp     int64
 	)
 
 	//read file into source
@@ -47,42 +46,41 @@ func main() {
 		}
 	}
 
-	strs = strings.Split(source,"\n")
+	strs = strings.Split(source, "\n")
 
 	for i, s := range strs {
 		strnums = strings.Split(s, ",")
-		for j, sn := range strnums  {
+		for j, sn := range strnums {
 			tmp, _ = strconv.ParseInt(sn, 10, 0)
 			tree[i][j].value = int(tmp)
 		}
 	}
 
-/*
-  //check data
-	for i, _ := range tree {
-		for j, _ := range tree[i] {
-			fmt.Printf("%5d", tree[i][j].value)
-		}
-		fmt.Println()
-	}
-*/	
+	/*
+	     //check data
+	   	for i, _ := range tree {
+	   		for j, _ := range tree[i] {
+	   			fmt.Printf("%5d", tree[i][j].value)
+	   		}
+	   		fmt.Println()
+	   	}
+	*/
 	fmt.Println("start")
 
-	for i := SIZE-11; i <= SIZE-1; i++ {
-		for j := SIZE-11; j <= SIZE-1; j++ {
+	for i := SIZE - 11; i <= SIZE-1; i++ {
+		for j := SIZE - 11; j <= SIZE-1; j++ {
 			fmt.Printf("%6d", tree[i][j].value)
 		}
 		fmt.Println()
 	}
 
-
 	// right col
-	for i := SIZE-1; i >= 0; i-- {
+	for i := SIZE - 1; i >= 0; i-- {
 		tree[i][SIZE-1].weight = tree[i][SIZE-1].value
 	}
 
-	// init all weights going by columns from right to left 
-	for j := SIZE-2; j >= 0; j-- {
+	// init all weights going by columns from right to left
+	for j := SIZE - 2; j >= 0; j-- {
 		for i := 0; i <= SIZE-1; i++ {
 			tree[i][j].weight = tree[i][j].value + tree[i][j+1].weight
 		}
@@ -91,7 +89,7 @@ func main() {
 		for !stable {
 			stable = true
 
-			for i := SIZE-2; i >= 0; i-- {
+			for i := SIZE - 2; i >= 0; i-- {
 				// if down is better than replace
 				downwt := tree[i+1][j].weight + tree[i][j].value
 				if tree[i][j].weight > downwt {
@@ -128,4 +126,5 @@ func main() {
 	fmt.Println(result)
 
 }
+
 /*-----------------------------------------------------------------------------*/

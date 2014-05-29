@@ -1,10 +1,10 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -16,9 +16,9 @@ func main() {
 		panic("File not read")
 	}
 
-	source := strings.Trim(string(content),"\n")
+	source := strings.Trim(string(content), "\n")
 
-	words := strings.Split(source,",")
+	words := strings.Split(source, ",")
 
 	// unquote words
 
@@ -34,7 +34,7 @@ func main() {
 	anamap := make(map[string]string, 0)
 
 	for i := 0; i < len(words); i++ {
-		for j := i+1; j < len(words); j++ {
+		for j := i + 1; j < len(words); j++ {
 			if isAnagramm(words[i], words[j]) {
 				anamap[words[i]] = words[j]
 				fmt.Println(words[i], words[j])
@@ -46,7 +46,7 @@ func main() {
 
 	fmt.Println(isMaps("RACE", "CARE", 9216, 1296))
 
-//	return
+	//	return
 
 	sqrs := prepareSquares()
 
@@ -62,6 +62,7 @@ func main() {
 		}
 	}
 }
+
 /*-----------------------------------------------------------------------------*/
 func isAnagramm(s1, s2 string) bool {
 
@@ -87,18 +88,21 @@ func isAnagramm(s1, s2 string) bool {
 
 	return true
 }
+
 /*-----------------------------------------------------------------------------*/
 func prepareSquares() []int {
 
 	sqrs := make([]int, 0)
 
-	for i := 1; i * i < 1e10; i++ {
-		switch numlen(i*i)  {
-		case 1, 2, 3, 4, 5, 6, 7, 9: sqrs = append(sqrs, i*i)
+	for i := 1; i*i < 1e10; i++ {
+		switch numlen(i * i) {
+		case 1, 2, 3, 4, 5, 6, 7, 9:
+			sqrs = append(sqrs, i*i)
 		}
 	}
 	return sqrs
 }
+
 /*-----------------------------------------------------------------------------*/
 func numlen(n int) int {
 
@@ -109,58 +113,70 @@ func numlen(n int) int {
 	}
 	return i
 }
+
 /*-----------------------------------------------------------------------------*/
 func isMaps(w1, w2 string, n1, n2 int) bool {
 
 	// check if n1 is a map of w1
-	
-	if len(w1) != numlen(n1) { return false }
+
+	if len(w1) != numlen(n1) {
+		return false
+	}
 
 	anmap := make(map[uint8]int, 0)
 	dmap := make(map[int]bool, 0)
 
 	for i := len(w1) - 1; i >= 0; i-- {
 		if anmap[w1[i]] == 0 {
-			if dmap[n1 % 10] { return false }
-			dmap[n1 % 10] = true
-			anmap[w1[i]] = n1 % 10 + 1
+			if dmap[n1%10] {
+				return false
+			}
+			dmap[n1%10] = true
+			anmap[w1[i]] = n1%10 + 1
 		} else {
-			if anmap[w1[i]] != n1 % 10 + 1 {	return false }
+			if anmap[w1[i]] != n1%10+1 {
+				return false
+			}
 		}
 
 		n1 /= 10
 	}
 
 	for i := len(w2) - 1; i >= 0; i-- {
-		if anmap[w2[i]] != n2 % 10 +1 {
+		if anmap[w2[i]] != n2%10+1 {
 			return false
 		}
 		n2 /= 10
 	}
-		
+
 	return true
 }
+
 /*-----------------------------------------------------------------------------*/
 func isMatches(n1, n2 int) bool {
 
 	//check if n1 && n2 consists of same digits
 
-	if n1 == n2 { return false }
+	if n1 == n2 {
+		return false
+	}
 
-	if numlen(n1) != numlen(n2) { return false }
+	if numlen(n1) != numlen(n2) {
+		return false
+	}
 
 	digits := make([]int, 10)
 
 	for n1 > 0 {
-		digits[n1 % 10]++
+		digits[n1%10]++
 		n1 /= 10
 	}
 
 	for n2 > 0 {
-		digits[n2 % 10]--
+		digits[n2%10]--
 		n2 /= 10
 	}
-	
+
 	for _, v := range digits {
 		if v != 0 {
 			return false

@@ -1,12 +1,12 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
 func main() {
-	
+
 	const (
 		LIMIT = 10000
 		ITERS = 50
@@ -40,6 +40,7 @@ func main() {
 
 	fmt.Println(count, count_rev)
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_palindrome(s string) bool {
 
@@ -51,14 +52,15 @@ func is_palindrome(s string) bool {
 
 	return true
 }
+
 /*-----------------------------------------------------------------------------*/
 func reverse(s string) string {
 
-    runes := []rune(s)
+	runes := []rune(s)
 
-    for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
-        runes[i], runes[j] = runes[j], runes[i]
-    }
+	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+		runes[i], runes[j] = runes[j], runes[i]
+	}
 
-    return string(runes)
+	return string(runes)
 }

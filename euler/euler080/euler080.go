@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math"
 	"math/big"
 )
@@ -29,14 +29,15 @@ func main() {
 	fmt.Println(sum)
 
 }
+
 /*-----------------------------------------------------------------------------*/
 func get_sqrt(n int64) *big.Rat {
 
 	zn := big.NewRat(n, 1)
 	eps := big.NewRat(1, 1e14) //14
-	eps.Mul(eps, eps) //28
-	eps.Mul(eps, eps) //56
-	eps.Mul(eps, eps) //112
+	eps.Mul(eps, eps)          //28
+	eps.Mul(eps, eps)          //56
+	eps.Mul(eps, eps)          //112
 
 	x0 := big.NewRat(1, 1)
 
@@ -51,7 +52,7 @@ func get_sqrt(n int64) *big.Rat {
 
 		z.Mul(x1, x1)
 		z.Abs(z.Sub(z, zn))
-		
+
 		if z.Cmp(eps) == -1 {
 			return x1
 		} else {
@@ -59,14 +60,15 @@ func get_sqrt(n int64) *big.Rat {
 		}
 	}
 }
+
 /*-----------------------------------------------------------------------------*/
 func sum100digits(z *big.Rat) int {
 	s := z.FloatString(105)
 	sum := 0
 	count := 0
-	for i:= 0; count < 100; i++ {
+	for i := 0; count < 100; i++ {
 		if s[i] != '.' {
-			sum += int(s[i]-'0')
+			sum += int(s[i] - '0')
 			count++
 		}
 	}

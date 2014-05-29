@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 // Partition Fuction P
@@ -18,12 +18,12 @@ const LIMIT = 100
 func main() {
 
 	// create dynamic array for parts
-	parts := make([][]int, LIMIT + 1)
+	parts := make([][]int, LIMIT+1)
 
 	result := 0
 
 	for i := 0; i <= LIMIT; i++ {
-		parts[i] = make([]int, i + 1)
+		parts[i] = make([]int, i+1)
 	}
 	// init 1st member
 	parts[1][1] = 1
@@ -36,6 +36,7 @@ func main() {
 	fmt.Println(result)
 
 }
+
 /*-----------------------------------------------------------------------------*/
 func get_parts(i, j int, parts [][]int) int {
 
@@ -43,10 +44,10 @@ func get_parts(i, j int, parts [][]int) int {
 	case i < j, j == 0:
 		return 0
 
-	case parts[i][j] != 0: 
+	case parts[i][j] != 0:
 		return parts[i][j]
 
-	case j == 1: 
+	case j == 1:
 		parts[i][j] = 1
 		return 1
 
@@ -55,7 +56,7 @@ func get_parts(i, j int, parts [][]int) int {
 		return 1
 
 	default:
-		parts[i][j] = get_parts(i-1, j-1, parts) + get_parts(i-j, j, parts)	
+		parts[i][j] = get_parts(i-1, j-1, parts) + get_parts(i-j, j, parts)
 		return parts[i][j]
 	}
 }

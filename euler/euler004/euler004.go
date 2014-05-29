@@ -11,7 +11,7 @@ func main() {
 		for j := 999; j > 900; j-- {
 			if is_palindrome(i * j) {
 				fmt.Println(i * j)
-				break;
+				break
 			}
 		}
 	}
@@ -19,12 +19,11 @@ func main() {
 
 func is_palindrome(p int) bool {
 
-	s := strconv.Itoa(p);
+	s := strconv.Itoa(p)
 	for i := 0; i < len(s)/2; i++ {
-		if s[i] != s[len(s) - 1 - i] {
-			return false;
+		if s[i] != s[len(s)-1-i] {
+			return false
 		}
 	}
-	return true;
+	return true
 }
-

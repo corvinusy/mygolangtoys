@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 const LIMIT = 1e7
@@ -18,6 +18,7 @@ func main() {
 
 	fmt.Println(count89)
 }
+
 /*-----------------------------------------------------------------------------*/
 func get_stuck(n int) int {
 

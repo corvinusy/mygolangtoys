@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 /*
@@ -13,7 +13,7 @@ const LIMIT = 7
 
 func main() {
 
-	rslice := make([][]int,LIMIT)
+	rslice := make([][]int, LIMIT)
 
 	rslice[0] = make([]int, 1)
 	rslice[0][0] = 1
@@ -22,7 +22,6 @@ func main() {
 	rslice[1][0] = 1
 	rslice[1][1] = 2
 
-
 	base := 1
 	newbase := 1
 
@@ -30,7 +29,7 @@ func main() {
 		rslice[i] = make([]int, i+1)
 
 		base = newbase
-		
+
 		for j := 0; j < len(rslice[i]); j++ {
 			rslice[i][j] = base + j
 		}
@@ -43,17 +42,18 @@ func main() {
 			rslice[i] = advance(rslice[i], base)
 			if isSatisfies(rslice[i]) {
 				sSum := sliceSum(rslice[i])
-				fmt.Println(i+1, base, rslice[i], sSum )
+				fmt.Println(i+1, base, rslice[i], sSum)
 				if sSum < sum {
 					sum = sSum
-					newbase = rslice[i][i/2]		
+					newbase = rslice[i][i/2]
 				}
 			}
 		}
 
 	}
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func isSatisfies(a []int) bool {
 
@@ -61,11 +61,10 @@ func isSatisfies(a []int) bool {
 
 	// enough to compare "low half of slice" and "high part minus 1 element"
 
-	mid := len(a)/2
+	mid := len(a) / 2
 	if sliceSum(a[0:mid+len(a)%2]) <= sliceSum(a[mid+1:]) {
 		return false
 	}
-
 
 	//verify rule 2
 
@@ -75,21 +74,21 @@ func isSatisfies(a []int) bool {
 
 	var (
 		lenA uint = uint(len(a))
-		bf uint
+		bf   uint
 	)
-	
-	for bf = 1; bf < 1 << lenA; bf++ {
+
+	for bf = 1; bf < 1<<lenA; bf++ {
 		// count sum of bit elements
 		sum := 0
-		for q, j := bf, 0; q != 0; q, j = q >> 1, j + 1 {
-			if q & 1 != 0 {
+		for q, j := bf, 0; q != 0; q, j = q>>1, j+1 {
+			if q&1 != 0 {
 				sum += a[j]
 			}
 		}
 		if seen[sum] == 0 {
 			seen[sum] = bf
 		} else {
-			if seen[sum] & bf == 0 {
+			if seen[sum]&bf == 0 {
 				return false
 			} else {
 				seen[sum] = seen[sum] | bf
@@ -98,11 +97,12 @@ func isSatisfies(a []int) bool {
 	}
 
 	// if map was successfully builded, that sequence is ok
-	
+
 	return true
 }
+
 /*----------------------------------------------------------------------------*/
-func advance(a []int, base int) []int { 
+func advance(a []int, base int) []int {
 
 	b := make([]int, len(a))
 	copy(b, a)
@@ -113,12 +113,12 @@ func advance(a []int, base int) []int {
 			for j := 0; j < i; j++ {
 				b[j] = base + j
 			}
-		return b
+			return b
 		}
 	}
 
 	// if not advanced by search than increment last and return
-	
+
 	b[len(b)-1] += 1
 
 	for j := 0; j < len(b)-1; j++ {
@@ -127,6 +127,7 @@ func advance(a []int, base int) []int {
 
 	return b
 }
+
 /*----------------------------------------------------------------------------*/
 func sliceSum(a []int) int {
 

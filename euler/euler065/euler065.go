@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
@@ -34,10 +34,9 @@ const LIMIT = 1e3
 func main() {
 
 	var (
-		n int64
+		n     int64
 		count int64 = 0
 	)
-
 
 	a := make([]int64, 0)
 	p := make([]*big.Int, 0)
@@ -46,12 +45,12 @@ func main() {
 	a = append(a, 2, 1)
 
 	q = append(q, big.NewInt(1), big.NewInt(a[1]))
-	p = append(p, big.NewInt(a[0]), big.NewInt(a[0]*a[1] + 1))
+	p = append(p, big.NewInt(a[0]), big.NewInt(a[0]*a[1]+1))
 
-	for n = 2; n <= 100 ; n++ {
+	for n = 2; n <= 100; n++ {
 
-		if (n + 1) % 3 == 0 {
-			a = append(a, 2 * (n+1) / 3 )
+		if (n+1)%3 == 0 {
+			a = append(a, 2*(n+1)/3)
 		} else {
 			a = append(a, 1)
 		}
@@ -59,14 +58,14 @@ func main() {
 		zp := big.NewInt(a[n])
 		zp.Mul(zp, p[n-1])
 		zp.Add(zp, p[n-2])
-		p = append(p, zp )
+		p = append(p, zp)
 
 		zq := big.NewInt(a[n])
 		zq.Mul(zq, q[n-1])
 		zq.Add(zq, q[n-2])
-		q = append(q, zq )
+		q = append(q, zq)
 
-		fmt.Println(n, a[n-1], p[n-1],"/", q[n-1])
+		fmt.Println(n, a[n-1], p[n-1], "/", q[n-1])
 	}
 
 	for _, s := range p[99].String() {
@@ -74,15 +73,13 @@ func main() {
 	}
 	fmt.Println(count)
 
-
-	
 }
 
 /*-----------------------------------------------------------------------------*/
 func is_periodic(a, pb, qb []int64) (bool, int64) {
-	for i:=2; i < len(a); i++ {
+	for i := 2; i < len(a); i++ {
 		if (a[1] == a[i]) && (qb[1] == qb[i]) && (pb[1] == pb[i]) {
-			return true, int64(i-1)
+			return true, int64(i - 1)
 		}
 	}
 	return false, 0

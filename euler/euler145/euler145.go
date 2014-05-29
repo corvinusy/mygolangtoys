@@ -12,18 +12,19 @@ func main() {
 	count := 0
 
 	for i := 1; i < LIMIT; i++ {
-		if i % 10 == 0 {
+		if i%10 == 0 {
 			continue
 		}
 		n = i + reverse(i)
 		if is_oddful(n) {
 			count++
-//			fmt.Println (i, reverse(i), n)
+			//			fmt.Println (i, reverse(i), n)
 		}
 	}
 	fmt.Println(count)
 
 }
+
 /*-----------------------------------------------------------------------------*/
 func reverse(n int) int {
 
@@ -33,7 +34,7 @@ func reverse(n int) int {
 
 	for n > 0 {
 		ds[nl] = n % 10
-		n /= 10 
+		n /= 10
 		nl++
 	}
 
@@ -47,12 +48,15 @@ func reverse(n int) int {
 	return n
 
 }
+
 /*-----------------------------------------------------------------------------*/
 func is_oddful(n int) bool {
 
 	for n > 0 {
-		if n & 1 == 0 { return false }
-		n /= 10 
+		if n&1 == 0 {
+			return false
+		}
+		n /= 10
 	}
 	return true
 }

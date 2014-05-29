@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"time"
 )
 
@@ -11,15 +11,15 @@ func main() {
 
 	var (
 		ratio, res_ratio float64 = 1, 1
-		res_n int = 1
+		res_n            int     = 1
 	)
 
-	var tots [LIMIT+1]int
+	var tots [LIMIT + 1]int
 
 	t1 := time.Now()
 
 	// prepare totient_sieve
-	for i := 1; i <= LIMIT ; i++ {
+	for i := 1; i <= LIMIT; i++ {
 		tots[i] = i
 	}
 
@@ -44,4 +44,5 @@ func main() {
 
 	return
 }
+
 /*-----------------------------------------------------------------------------*/

@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"github.com/cznic/mathutil"
 )
 
@@ -15,6 +15,7 @@ func main() {
 
 	fmt.Println(superExpMod(BASE, LIMIT, 1e9))
 }
+
 /*----------------------------------------------------------------------------*/
 func superExpMod(b, e, m uint64) uint64 {
 

@@ -1,24 +1,22 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"time"
 )
 
 func main() {
 
-    const LIMIT = 1e4
+	const LIMIT = 1e4
 
-    var (
+	var (
 		n, cube, digits uint64
-		
 	)
 
 	t1 := time.Now()
 
 	cubes := make(map[uint64]uint64, 0)
 	mincubes := make(map[uint64]uint64, 0)
-	
 
 	for n = 1; n <= LIMIT; n++ {
 		cube = n * n * n
@@ -35,19 +33,20 @@ func main() {
 	}
 
 }
+
 /*-----------------------------------------------------------------------------*/
 func sort_digits(n1 uint64) uint64 {
-	ds := [...]uint64{0,0,0,0,0,0,0,0,0,0}
+	ds := [...]uint64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}
 
 	for n1 > 0 {
-		ds[n1 % 10]++
+		ds[n1%10]++
 		n1 /= 10
 	}
 
 	var res uint64 = 0
 
 	for i := len(ds) - 1; i >= 0; i-- {
-		res = res * 10 + ds[i]
+		res = res*10 + ds[i]
 	}
 	return res
 }

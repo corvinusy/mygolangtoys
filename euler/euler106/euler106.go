@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 /*
@@ -17,10 +17,10 @@ func main() {
 
 	var a TSlice
 
-	a = make([]int,LIMIT)
+	a = make([]int, LIMIT)
 
 	a[LIMIT-1] = 1
-	
+
 	allCount := 0
 	resCount := 0
 
@@ -33,16 +33,17 @@ func main() {
 			}
 		}
 	}
-	
+
 	fmt.Println("allCount =", allCount, "resCount =", resCount)
 }
-/*----------------------------------------------------------------------------*/
-func (a TSlice) advance() { 
 
-	for i := len(a)-1; i >= 0 ; i-- {
+/*----------------------------------------------------------------------------*/
+func (a TSlice) advance() {
+
+	for i := len(a) - 1; i >= 0; i-- {
 		if a[i] < 2 {
 			a[i] += 1
-			for j := i+1 ; j < len(a); j++  {
+			for j := i + 1; j < len(a); j++ {
 				a[j] = 0
 			}
 			return
@@ -50,13 +51,14 @@ func (a TSlice) advance() {
 	}
 
 	// if not advanced than set allballs
-	
+
 	for j := range a {
 		a[j] = 0
 	}
 
 	return
 }
+
 /*----------------------------------------------------------------------------*/
 func (a TSlice) isEmpty() bool {
 
@@ -68,11 +70,12 @@ func (a TSlice) isEmpty() bool {
 
 	return true
 }
+
 /*----------------------------------------------------------------------------*/
 func (a TSlice) isQualified() bool {
 
 	has1 := false
-	
+
 	for i := range a {
 
 		if a[i] == 1 {
@@ -86,13 +89,14 @@ func (a TSlice) isQualified() bool {
 
 	return false
 }
+
 /*----------------------------------------------------------------------------*/
 func (a TSlice) isCounted() bool {
 
 	sumOf1 := 0
 	sumOf2 := 0
 	check_trigger := false
-	
+
 	for i := range a {
 		if a[i] == 1 {
 			sumOf1 += 1

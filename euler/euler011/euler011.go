@@ -2,15 +2,13 @@ package main
 
 import (
 	"fmt"
-	"strings"
 	"strconv"
+	"strings"
 )
 
-
 func main() {
-	
-	var grid_str string = 
-`08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
+
+	var grid_str string = `08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
  49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00
  81 49 31 73 55 79 14 29 93 71 40 67 53 88 30 03 49 13 36 65
  52 70 95 23 04 60 11 42 69 24 68 56 01 32 56 71 37 02 36 91
@@ -35,14 +33,14 @@ func main() {
 	//form slice
 
 	var nums []string
-	
+
 	nums = strings.Fields(grid_str)
 
 	var grid [20][20]int64
 
 	for i := 0; i < 20; i++ {
-		for j := 0; j < 20; j ++ {
-			grid[i][j], _ = strconv.ParseInt(nums[i * 20 + j], 10, 64);
+		for j := 0; j < 20; j++ {
+			grid[i][j], _ = strconv.ParseInt(nums[i*20+j], 10, 64)
 		}
 	}
 
@@ -52,9 +50,9 @@ func main() {
 	//horizon
 	for i := 0; i < 20; i++ {
 		for j := 0; j <= 16; j++ {
-			product = 1;
+			product = 1
 			for n := 0; n < 4; n++ {
-				product = product * grid[i][j + n]
+				product = product * grid[i][j+n]
 			}
 			if product > result {
 				result = product
@@ -63,11 +61,11 @@ func main() {
 	}
 	fmt.Println("horizon passed")
 	//vertical
-	for i := 0; i <=16; i++ {
+	for i := 0; i <= 16; i++ {
 		for j := 0; j < 20; j++ {
-			product = 1;
+			product = 1
 			for n := 0; n < 4; n++ {
-				product = product * grid[i + n][j]
+				product = product * grid[i+n][j]
 			}
 			if product > result {
 				result = product
@@ -76,11 +74,11 @@ func main() {
 	}
 	fmt.Println("vertical passed")
 	//down-right-diag
-	for i := 0; i <=16; i++ {
+	for i := 0; i <= 16; i++ {
 		for j := 0; j <= 16; j++ {
-			product = 1;
+			product = 1
 			for n := 0; n < 4; n++ {
-				product = product * grid[i + n][j + n]
+				product = product * grid[i+n][j+n]
 			}
 			if product > result {
 				result = product
@@ -91,9 +89,9 @@ func main() {
 	//down-left-diag
 	for i := 0; i <= 16; i++ {
 		for j := 3; j < 20; j++ {
-			product = 1;
+			product = 1
 			for n := 0; n < 4; n++ {
-				product = product * grid[i + n][j - n]
+				product = product * grid[i+n][j-n]
 			}
 			if product > result {
 				result = product

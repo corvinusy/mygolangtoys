@@ -1,15 +1,15 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
-	
+
 	const LIMIT = 2e5
 
 	var (
-		i, d, sum, num, finsum  int64
+		i, d, sum, num, finsum int64
 	)
 
 	numslice := make([]int64, 0)
@@ -18,7 +18,7 @@ func main() {
 	for i = 2; i <= LIMIT; i++ {
 		num = i
 		sum = 0
-		for num > 0  {
+		for num > 0 {
 			d = num % 10
 			sum = sum + d*d*d*d*d
 			if sum > i {

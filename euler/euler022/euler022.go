@@ -1,11 +1,11 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"io/ioutil"
-	"strings"
-	"strconv"
 	"sort"
+	"strconv"
+	"strings"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 	}
 
 	lines := strings.Split(string(content), ",")
-	for i , line := range lines {
+	for i, line := range lines {
 		lines[i], _ = strconv.Unquote(line)
 	}
 
@@ -24,13 +24,14 @@ func main() {
 	fmt.Println(lines[938])
 
 	sum := 0
-	
+
 	for i, _ := range lines {
 		sum += letsum(lines[i]) * (i + 1)
 	}
 
 	fmt.Println(sum)
 }
+
 /*-----------------------------------------------------------------------------*/
 func letsum(s string) int {
 	sum := 0

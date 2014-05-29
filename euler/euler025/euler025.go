@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
 )
 
@@ -10,7 +10,7 @@ func main() {
 	f2 := big.NewInt(1)
 	ftmp := big.NewInt(1)
 
-    i := 2
+	i := 2
 
 	for {
 		ftmp.Add(f1, f2)
@@ -21,8 +21,7 @@ func main() {
 			break
 		}
 	}
-	
-	fmt.Println(i, " ", f1.String())
-	
-}
 
+	fmt.Println(i, " ", f1.String())
+
+}

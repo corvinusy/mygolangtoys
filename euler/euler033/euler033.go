@@ -1,10 +1,10 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 	"math/big"
-	"strings"
 	"strconv"
+	"strings"
 )
 
 func main() {
@@ -15,14 +15,14 @@ func main() {
 		i, j int64
 	)
 
-	r := big.NewRat(1, 1);
+	r := big.NewRat(1, 1)
 
 	for i = 11; i < LIMIT; i++ {
-		if i % 10 ==0 {
+		if i%10 == 0 {
 			continue
 		}
-		for j = i+1; j < LIMIT; j++ {
-			if j % 10 == 0 {
+		for j = i + 1; j < LIMIT; j++ {
+			if j%10 == 0 {
 				continue
 			}
 			if is_satisfies(i, j) {
@@ -42,19 +42,25 @@ func is_satisfies(i, j int64) bool {
 	var r1, r2 *big.Rat
 
 	switch {
-		case !strings.ContainsAny(numstr, denstr),
+	case !strings.ContainsAny(numstr, denstr),
 		numstr[0] == numstr[1],
-		denstr[0] == denstr[1] : return false
+		denstr[0] == denstr[1]:
+		return false
 	}
 
 	r1 = big.NewRat(i, j)
-	
+
 	switch {
-	case numstr[0] == denstr[0]: r2 = big.NewRat(int64(numstr[1] - '0'), int64(denstr[1] - '0'))
-	case numstr[0] == denstr[1]: r2 = big.NewRat(int64(numstr[1] - '0'), int64(denstr[0] - '0'))
-	case numstr[1] == denstr[0]: r2 = big.NewRat(int64(numstr[0] - '0'), int64(denstr[1] - '0'))
-	case numstr[1] == denstr[1]: r2 = big.NewRat(int64(numstr[0] - '0'), int64(denstr[0] - '0'))
-	default: return false
+	case numstr[0] == denstr[0]:
+		r2 = big.NewRat(int64(numstr[1]-'0'), int64(denstr[1]-'0'))
+	case numstr[0] == denstr[1]:
+		r2 = big.NewRat(int64(numstr[1]-'0'), int64(denstr[0]-'0'))
+	case numstr[1] == denstr[0]:
+		r2 = big.NewRat(int64(numstr[0]-'0'), int64(denstr[1]-'0'))
+	case numstr[1] == denstr[1]:
+		r2 = big.NewRat(int64(numstr[0]-'0'), int64(denstr[0]-'0'))
+	default:
+		return false
 	}
 
 	if r1.Cmp(r2) == 0 {

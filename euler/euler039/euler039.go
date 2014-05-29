@@ -1,7 +1,7 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func main() {
@@ -18,7 +18,7 @@ func main() {
 	for p = 1; p <= LIMIT; p++ {
 		count := 0
 		cmap := make(map[int]bool, 0)
-		for i = 1; i < p ; i++ {
+		for i = 1; i < p; i++ {
 			if cmap[i] {
 				continue
 			}
@@ -26,7 +26,7 @@ func main() {
 				if cmap[j] {
 					continue
 				}
-				if i + j >= p {
+				if i+j >= p {
 					break
 				}
 				if is_satisfies(i, j, p) {
@@ -46,6 +46,6 @@ func main() {
 
 /*-----------------------------------------------------------------------------*/
 func is_satisfies(i, j, p int) bool {
-	sqr := (p - i - j)* (p - i - j)
-	return sqr == i*i + j*j
+	sqr := (p - i - j) * (p - i - j)
+	return sqr == i*i+j*j
 }

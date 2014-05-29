@@ -13,7 +13,7 @@ func main() {
 	t1 := time.Now()
 	for i = 1; i < 15000; i++ {
 		num = num + i
-		if num % (30) != 0 {
+		if num%(30) != 0 {
 			continue
 		}
 		divs = divNum(num)
@@ -25,20 +25,19 @@ func main() {
 	}
 }
 
-func divNum (num int64) int64 {
+func divNum(num int64) int64 {
 
-	var count int64 = 2;
-	var i int64;
+	var count int64 = 2
+	var i int64
 	sqrnum := int64(math.Sqrt(float64(num)))
-	
-	for i=2; i <= sqrnum; i ++ {
-		if num % i == 0 {
-			count +=2
+
+	for i = 2; i <= sqrnum; i++ {
+		if num%i == 0 {
+			count += 2
 		}
 	}
 	return count
 }
-
 
 /*
 func main() {
@@ -91,7 +90,7 @@ func prime_list (limit int64, primes *([]int64)) {
 
 	sieve[2] = true
 	sieve[3] = true
-	
+
 	for x = 1; x <= sqr_lim; x++ {
 		for y = 1; y <= sqr_lim; y++ {
 
@@ -120,7 +119,7 @@ func prime_list (limit int64, primes *([]int64)) {
 			}
 		}
 	}
-	
+
 	for i = 0; i <= limit; i++ {
 		if sieve[i] {
 			*primes = append(*primes, i)

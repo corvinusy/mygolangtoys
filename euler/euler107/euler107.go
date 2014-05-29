@@ -1,27 +1,27 @@
 package main
 
 import (
-    "fmt"
-	"io/ioutil"
-	"strings"
-	"strconv"
 	"container/list"
+	"fmt"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"path"
+	"strconv"
+	"strings"
 )
 
 const (
-	SIZE = 40
-	GREY = 0
+	SIZE   = 40
+	GREY   = 0
 	ORANGE = -1
-	RED = -2
+	RED    = -2
 )
 
 type Node struct {
-	num int
-	color int
-	edges [40]int
+	num      int
+	color    int
+	edges    [40]int
 	distance int
 }
 
@@ -32,31 +32,32 @@ func main() {
 	fname := path.Dir(execPath) + "/network.txt"
 
 	tree := getTreeFromFile(fname)
-	
+
 	//check data
-/*
-	for _, t := range tree {
-		fmt.Println(t)
-	}
-*/
+	/*
+		for _, t := range tree {
+			fmt.Println(t)
+		}
+	*/
 	mst := make([]Node, 0)
-	mst = append(mst,tree[0])
+	mst = append(mst, tree[0])
 
 	near := list.New()
 
 	updateNear(near, mst, tree)
-	
+
 	for len(mst) < SIZE {
 		mst = append(mst, getBest(near))
 		updateNear(near, mst, tree)
-/*
-		fmt.Printf("%d:[", len(mst))
-		for _, m := range mst {
-			fmt.Printf(",%d", m.num)
-		}
-		fmt.Println("]")
-*/	}
-	
+		/*
+			fmt.Printf("%d:[", len(mst))
+			for _, m := range mst {
+				fmt.Printf(",%d", m.num)
+			}
+			fmt.Println("]")
+		*/
+	}
+
 	minDistance := 0
 
 	for _, m := range mst {
@@ -75,8 +76,9 @@ func main() {
 
 	return
 }
+
 /*----------------------------------------------------------------------------*/
-func updateNear(near *list.List, mst, tree []Node)  {
+func updateNear(near *list.List, mst, tree []Node) {
 
 	for _, m := range mst {
 		for i, v := range m.edges {
@@ -98,14 +100,15 @@ func updateNear(near *list.List, mst, tree []Node)  {
 					tree[i].distance = v
 					near.PushBack(tree[i])
 				}
-		
+
 			}
 		}
 	}
 
 	return
-	
+
 }
+
 /*----------------------------------------------------------------------------*/
 func isAlwaysInMST(mst []Node, n int) bool {
 
@@ -117,12 +120,13 @@ func isAlwaysInMST(mst []Node, n int) bool {
 
 	return false
 }
+
 /*----------------------------------------------------------------------------*/
 func getBest(near *list.List) Node {
 
 	result := near.Front()
 
-	for e := near.Front(); e != nil; e = e.Next()  {
+	for e := near.Front(); e != nil; e = e.Next() {
 		if e.Value.(Node).distance < result.Value.(Node).distance {
 			result = e
 		}
@@ -130,13 +134,14 @@ func getBest(near *list.List) Node {
 
 	return near.Remove(result).(Node)
 }
+
 /*----------------------------------------------------------------------------*/
 func getTreeFromFile(fname string) []Node {
 
 	var (
-		strs []string
+		strs    []string
 		strnums []string
-		tmp int64
+		tmp     int64
 	)
 
 	//read file into source
@@ -148,21 +153,21 @@ func getTreeFromFile(fname string) []Node {
 
 	source := strings.Trim(string(content), "\n")
 
-	//create result placeholder 
+	//create result placeholder
 	tree := make([]Node, SIZE)
 
-	strs = strings.Split(source,"\n")
+	strs = strings.Split(source, "\n")
 
 	for i, s := range strs {
 		strnums = strings.Split(s, ",")
 		tree[i].num = i
-		for j, sn := range strnums  {
+		for j, sn := range strnums {
 			if sn != "-" {
 				tmp, _ = strconv.ParseInt(sn, 10, 0)
 				tree[i].edges[j] = int(tmp)
-			} 
+			}
 		}
 	}
-	
+
 	return tree
 }
