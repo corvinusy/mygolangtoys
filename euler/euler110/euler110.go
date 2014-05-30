@@ -2,175 +2,116 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"github.com/cznic/mathutil"
 )
 
-/* If n = (p1^a1)(p2^a2)...(pt^at),
- * 2-partitions = ((2 a1 + 1)(2 a2 + 1) ... (2 at + 1) + 1)/2.
- * We want ((2 a1 + 1)(2 a2 + 1) ... (2 at + 1) + 1)/2 > 4e6
- * (2 a1 + 1)(2 a2 + 1) ... (2 at + 1) > 8e6
- *
- */
+const (
+	limit = 1e18
 
-const LIMIT = 4e6
+	base = uint64(2 * 3 * 5 * 7 * 11 * 13 * 17 * 19 * 23 * 29 * 31)
+)
 
-var primes []uint
+type factor struct {
+	prime uint64
+	power uint64
+}
+
+type divisor struct {
+	number uint64
+	factors []factor
+}
 
 func main() {
-	primes = create_primes_atkin(1000)
-	vec := make([]uint, 0)
-	var num, res uint
+
+	d := new(divisor)
+
+	d.number = base
+	d.updateFactors()
+
+	for ;d.number < limit; d.getNext()  {
+
+		dr := d.getReciprocals()
+
+		if dr > 4e6 {
+
+			fmt.Printf("n = %4d : a(n) = %d\n", d.number, dr)
+			break
+		}
+	}
+	
+	return
+}
+/*----------------------------------------------------------------------------*/
+func (d *divisor) getNumberOfDivisors() uint64 {
+
+	//calculate sigma function
+	result := uint64(1)
+
+	for i := range d.factors {
+		result *= 2 * d.factors[i].power + 1
+	}
+
+	return result
+}
+/*----------------------------------------------------------------------------*/
+func (d *divisor) getReciprocals() uint64 {
+
+	return (d.getNumberOfDivisors() + 1) / 2
+
+}
+/*----------------------------------------------------------------------------*/
+func (d *divisor) getNext() {
+
+	d.number += base
+	d.updateFactors()
+
+}
+/*----------------------------------------------------------------------------*/
+func (d *divisor) updateFactors() {
+
+	if mathutil.IsPrimeUint64(d.number) {
+		d.factors = []factor{{d.number,1}}
+		return
+	}
+
+	fs := make([]factor,0)
+	n := d.number
+
+	prime32 := uint32(0)
+
 	for {
-		vec = growVec(vec)
-		if calcUnits(vec) > LIMIT {
-			res = getNumFromVec(vec)
-			for i := 0; i < 100; i++ {
-				if getNumFromVec(vec) <= res {
-					fmt.Println(vec, getNumFromVec(vec), calcUnits(vec))
-				}
-				vec = advanceVec(vec)
-				num = getNumFromVec(vec)
-				if num < res && calcUnits(vec) > LIMIT {
-					res = num
-					continue
-				}
-				// break
-			}
-			fmt.Println(res)
+		prime32, _ = mathutil.NextPrime(prime32);
+		if prime32 > 5e1 {
 			break
 		}
-	}
-}
+		
+		prime := uint64(prime32)
 
-/*----------------------------------------------------------------------------*/
-func calcUnits(vec []uint) uint {
-	units := uint(1)
-	for i, _ := range vec {
-		units *= 2*vec[i] + 1
-	}
-	units += 1
-	units /= 2
-	return units
-}
-/*----------------------------------------------------------------------------*/
-func growVec(vec []uint) []uint {
-	vec = append(vec, 1)
-	return vec
-}
-/*----------------------------------------------------------------------------*/
-func advanceVec(vec []uint) []uint {
+		if prime*prime > n {
+			break
+		}
+		
+		power := uint64(0)
+		
+		for n % prime == 0 {
+			n /= prime
+			power++
+		}
 
-	low := 0
-	high := len(vec) - 1
+		if power != 0 {
+			fs = append(fs, factor{prime, power} )
+		}
 
-	for i := len(vec) - 1; i >= 0; i-- {
-		if vec[i] != 0 {
-			high = i
+		if n == 1 {
 			break
 		}
 	}
 
-	for i := 0; i < high-1; i++ {
-		if vec[i] <= vec[i+1] {
-			continue
-		}
-		low = i + 1
+	if n != 1 {
+		fs = append(fs, factor{n, 1} )		
 	}
 
-	if calcUnits(vec) > LIMIT {
-		vec[high]--
-	} else {
-		vec[low]++
-	}
+	d.factors = fs
 
-	return vec
 }
-
-/*----------------------------------------------------------------------------*/
-func getFactors(num uint) []uint {
-
-	//	sqrnum := uint(math.Sqrt(float64(num)))
-
-	vector := make([]uint, 0)
-
-	for i := 0; primes[i] <= num; i++ {
-
-		vector = append(vector, 0)
-
-		for num%primes[i] == 0 {
-			vector[len(vector)-1]++
-			num /= primes[i]
-		}
-	}
-
-	return vector
-}
-
-/*----------------------------------------------------------------------------*/
-func getNumFromVec(vec []uint) uint {
-
-	num := uint(1)
-
-	for i, _ := range vec {
-		for j := vec[i]; j > 0; j-- {
-			num *= primes[i]
-		}
-	}
-	return num
-}
-
-/*-----------------------------------------------------------------------------*/
-func create_primes_atkin(limit uint) []uint {
-
-	var i, x, y, n uint
-
-	sqr_lim := uint(math.Sqrt(float64(limit)))
-	sieve_nums := make([]bool, limit+1)
-	primes := make([]uint, 0)
-
-	for i = 5; i <= limit; i++ {
-		sieve_nums[i] = false
-	}
-
-	sieve_nums[2] = true
-	sieve_nums[3] = true
-
-	for x = 1; x <= sqr_lim; x++ {
-		for y = 1; y <= sqr_lim; y++ {
-
-			n = 4*x*x + y*y
-			if (n <= limit) && ((n%12 == 1) || (n%12 == 5)) {
-				sieve_nums[n] = !sieve_nums[n]
-			}
-
-			n = n - x*x
-			if (n <= limit) && (n%12 == 7) {
-				sieve_nums[n] = !sieve_nums[n]
-			}
-
-			n = n - 2*y*y
-			if (x > y) && (n <= limit) && (n%12 == 11) {
-				sieve_nums[n] = !sieve_nums[n]
-			}
-		}
-	}
-
-	for i = 5; i <= sqr_lim; i++ {
-		if sieve_nums[i] {
-			n = i * i
-			for j := n; j <= limit; j += n {
-				sieve_nums[j] = false
-			}
-		}
-	}
-
-	for i = 0; i <= limit; i++ {
-		if sieve_nums[i] {
-			primes = append(primes, i)
-		}
-	}
-
-	return primes
-}
-
 /*----------------------------------------------------------------------------*/

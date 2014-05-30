@@ -2,103 +2,82 @@ package main
 
 import (
 	"fmt"
-	"math"
+	"github.com/cznic/mathutil"
 )
 
-
-const limit = 1e7
-
-var primes []int
+const limit = 1e9
 
 func main() {
 
-	primes = createPrimesAtkin(limit/10)
+	var dr uint64
+	var n uint64
 
-	for n := int(1); n < limit; n++ {
-		primeVec := getFactors(n)
-		units := 1
+	for n = 2; n <= limit; n += 2  {
 
-		for i := range primeVec {
-			units *= 2*primeVec[i] + 1
-		}
+		dr = getDiophantReciprocals(n)
 
-		units += 1
-		units /= 2
-		if units > 1e3 {
-			fmt.Println(n, units)
+		if dr > 1e3 {
+			fmt.Printf("n = %4d : a(n) = %d\n", n, dr)
 			break
 		}
 	}
+	
+	return
 }
 /*----------------------------------------------------------------------------*/
-func getFactors(num int) []int {
-	sqrnum := int(math.Sqrt(float64(num)))
-	vector := make([]int, 0)
+func getNumberOfDivisors(n uint64) uint64 {
+	
+	factorPowers := factorPowersUint64(n)
 
-	for i := 0; primes[i] <= sqrnum; i++ {
-		if num%primes[i] == 0 {
-			vector = append(vector, 0)
-		}
-		for num%primes[i] == 0 {
-			vector[len(vector)-1]++
-			num /= primes[i]
-		}
-	}
-	return vector
-}
-/*-----------------------------------------------------------------------------*/
-func createPrimesAtkin(limit int) []int {
+	//calculate sigma function
+	result := uint64(1)
 
-	var (
-		i, x, y, n int
-	)
-
-	sqrLim := int(math.Sqrt(float64(limit)))
-	sieveNums := make([]bool, limit+1)
-	primes := make([]int, 0)
-
-	for i = 5; i <= limit; i++ {
-		sieveNums[i] = false
+	for i := range factorPowers {
+		result *= factorPowers[i] + 1
 	}
 
-	sieveNums[2] = true
-	sieveNums[3] = true
-
-	for x = 1; x <= sqrLim; x++ {
-		for y = 1; y <= sqrLim; y++ {
-
-			n = 4*x*x + y*y
-			if (n <= limit) && ((n%12 == 1) || (n%12 == 5)) {
-				sieveNums[n] = !sieveNums[n]
-			}
-
-			n = n - x*x
-			if (n <= limit) && (n%12 == 7) {
-				sieveNums[n] = !sieveNums[n]
-			}
-
-			n = n - 2*y*y
-			if (x > y) && (n <= limit) && (n%12 == 11) {
-				sieveNums[n] = !sieveNums[n]
-			}
-		}
-	}
-
-	for i = 5; i <= sqrLim; i++ {
-		if sieveNums[i] {
-			n = i * i
-			for j := n; j <= limit; j += n {
-				sieveNums[j] = false
-			}
-		}
-	}
-
-	for i = 0; i <= limit; i++ {
-		if sieveNums[i] {
-			primes = append(primes, i)
-		}
-	}
-
-	return primes
+	return result
 }
 /*----------------------------------------------------------------------------*/
+func getDiophantReciprocals(n uint64) uint64 {
+	return (getNumberOfDivisors(n*n) + 1) / 2
+}
+/*----------------------------------------------------------------------------*/
+func factorPowersUint64(n uint64) []uint64 {
+
+	factorPowers := make([]uint64, 0, 20)
+	prime32 := uint32(0)
+
+	for {
+		var ok bool
+		if prime32, ok = mathutil.NextPrime(prime32); !ok {
+			break
+		}
+		
+		prime := uint64(prime32)
+		if prime*prime > n {
+			break
+		}
+		
+		power := uint64(0)
+		
+		for n % prime == 0 {
+			n /= prime
+			power++
+		}
+
+		if power != 0 {
+			factorPowers = append(factorPowers, power)
+		}
+
+		if n == 1 {
+			break
+		}
+	}
+
+	if n != 1 {
+		factorPowers = append(factorPowers, 1)
+	}
+
+	return factorPowers
+}
