@@ -3,92 +3,104 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+	"os/exec"
+	"path"
 	"strconv"
 	"strings"
 )
 
-const SIZE = 81
+const (
+	mxSize = 80
+	maxInt = int(^uint(0) >> 1)
+)
 
 type Node struct {
-	row    int
-	col    int
 	value  int
 	weight int
 }
 
 func main() {
 
-	var (
-		strs    []string
-		strnums []string
-		tmp     int64
-	)
+	// get path of binary
+
+	programPath, err := exec.LookPath(os.Args[0])
+
+	if err != nil {
+		panic(err)
+	}
+
+	dataFileName := path.Dir(programPath) + "/matrix.txt"
 
 	//read file into source
 
-	content, err := ioutil.ReadFile("matrix.txt")
+	content, err := ioutil.ReadFile(dataFileName)
 	if err != nil {
-		panic("File not read")
+		panic("File can not be read")
 	}
 
 	source := strings.Trim(string(content), "\n")
 
-	//create tree and init with 0
-	tree := make([][]Node, SIZE)
+	// init matrix of Nodes
+	mx := make([][]Node, mxSize)
 
-	for i := range tree {
-		tree[i] = make([]Node, SIZE)
-		for j, node := range tree[i] {
-			node.row = i
-			node.col = j
-			node.value = 0
-			node.weight = 0
+	for i := range mx {
+		mx[i] = make([]Node, mxSize)
+	}
+
+	// parse file content into matrix
+
+	lines := strings.Split(source, "\n")
+
+	for i, line := range lines {
+		numbers := strings.Split(line, ",")
+		for j, number := range numbers {
+			if value, err := strconv.ParseInt(number, 10, 0); err == nil {
+				mx[i][j].value = int(value)
+			}
+			mx[i][j].weight = 0
 		}
 	}
 
-	strs = strings.Split(source, "\n")
+	/*
+		// init start member weight
+		mx[0][0].weight = mx[0][0].value
 
-	for i, s := range strs {
-		strnums = strings.Split(s, ",")
-		for j, sn := range strnums {
-			tmp, _ = strconv.ParseInt(sn, 10, 0)
-			tree[i][j].value = int(tmp)
+		// init start member row and col weight
+		for i := 1; i < mxSize; i++ {
+			mx[0][i] := mx[0][i-1].weight + mx[0][i].value
+			mx[i][0] := mx[i-1][0].weight + mx[i][0].value
 		}
-	}
-
-	/*  //check data
-	for i, _ := range tree {
-		for j, _ := range tree[i] {
-			fmt.Printf("%5d", tree[i][j].value)
-		}
-		fmt.Println()
-	}
 	*/
-
 	// low row
-	for j := SIZE - 2; j >= 0; j-- {
-		tree[SIZE-2][j].weight = tree[SIZE-2][j+1].value + tree[SIZE-2][j+1].weight
+	for j := mxSize - 2; j >= 0; j-- {
+		mx[mxSize-2][j].weight = mx[mxSize-2][j+1].value + mx[mxSize-2][j+1].weight
 	}
 
 	// right col
-	for i := SIZE - 2; i >= 0; i-- {
-		tree[i][SIZE-2].weight = tree[i+1][SIZE-2].value + tree[i+1][SIZE-2].weight
+	for i := mxSize - 2; i >= 0; i-- {
+		mx[i][mxSize-2].weight = mx[i+1][mxSize-2].value + mx[i+1][mxSize-2].weight
 	}
 
 	// other members
-	for i := SIZE - 3; i >= 0; i-- {
-		for j := SIZE - 3; j >= 0; j-- {
+	for i := mxSize - 3; i >= 0; i-- {
+		for j := mxSize - 3; j >= 0; j-- {
 
-			t1 := tree[i+1][j].value + tree[i+1][j].weight
-			t2 := tree[i][j+1].value + tree[i][j+1].weight
+			t1 := mx[i+1][j].value + mx[i+1][j].weight
+			t2 := mx[i][j+1].value + mx[i][j+1].weight
 			if t1 < t2 {
-				tree[i][j].weight += t1
+				mx[i][j].weight += t1
 			} else {
-				tree[i][j].weight += t2
+				mx[i][j].weight += t2
 			}
 		}
 	}
 
-	fmt.Println(tree[0][0].weight + tree[0][0].value)
+	fmt.Println(mx[0][0].weight + mx[0][0].value)
 
+}
+
+/*----------------------------------------------------------------------------*/
+func dijkstraPath(mx [][]int, i_start, j_start, i_end, j_end int) int {
+	return 0
 }

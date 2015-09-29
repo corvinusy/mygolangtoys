@@ -1,0 +1,26 @@
+{
+    "secret": "secret",
+    "ApiVersion" : "0.0.4",
+    "database": {
+	"host": "localhost",
+	"dbname": "sl",
+        "port" : "5432",
+        "user0" : "admin",
+        "password0" : "admin",
+        "user1" : "products",
+        "password1" : "products",
+        "user2" : "sales",
+        "password2" : "sales",
+        "sslmode" : "disable"
+    },
+    "storage": {
+        "addr": "localhost:6379",
+        "password" : "",
+        "db" : 0
+    },
+    "cache": {
+        "addr": "localhost:6379",
+        "password" : "",
+        "db" : 1
+    }
+}
