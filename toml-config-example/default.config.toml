@@ -1,0 +1,35 @@
+# toml config example
+
+# title is like a watermark, do not edit
+title = "License Server Web App Configuration"
+
+secret = "secret"
+version = "0.0.5"
+port = "8080"
+test_db = "sqlite3"
+test_dsn = "/tmp/sl.sqlite.db"
+db = "postgres"
+dsn = "postgres://postgres:postgres_password@localhost:5432/sl?sslmode=disable&search_path=user,public"
+lease_time_add = "168h"
+
+[email]
+server = "smtp.gmail.com"
+port = "587"
+name = "License Server Prototype"
+address = "address@email.com"
+password = "email_password"
+title = "Your activation key"
+
+[swagger]
+url = "http://localhost:8080"
+api_path = "/docs.json"        
+swagger_path = "/docs/"
+swagger_dist = "./swagger-ui/dist"
+
+[fluent]
+port = "8224"
+host = "localhost"
+tag = "sl.webapp.access"
+db_tag = "sl.webapp.db"
+
+
