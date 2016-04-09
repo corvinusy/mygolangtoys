@@ -1,7 +1,6 @@
-/* channel_test01.go
+/* channels.go
  * Tests how go-routines interact with channels
- * Call: channel_test01 --help
- * Pls, do not use name "channel_test", because this name always is used by go-pkg-system
+ * Call: channels --help
  */
 
 package main
@@ -14,71 +13,74 @@ import (
 )
 
 // flag support for program
-var MAXPROCS int
-var LOAD_CYCLES int //internal burden cycle
+var maxProcs int
+var cycleNumber int //internal burden cycle
 
 func init() {
-	flag.IntVar(&MAXPROCS, "maxprocs", 1, "maxprocs for testing. From 1 to 256 ")
-	flag.IntVar(&LOAD_CYCLES, "cycles", 1000, "burden internal cycle for testing. From 1 to 1000000 and more ")
+	flag.IntVar(&maxProcs, "maxprocs", 1, "maxprocs for testing. From 1 to 256 ")
+	flag.IntVar(&cycleNumber, "cycles", 1000, "burden internal cycle for testing. From 1 to 1000000 and more ")
 }
 
 func main() {
 
-	flag.Parse() //get MAXPROCS and LOAD_CYCLES from flags
+	flag.Parse()
 
-	// runtime.GOMAXPROCS() returns previous max_procs
-	max_procs := runtime.GOMAXPROCS(MAXPROCS)
-	// second call to get real state
-	max_procs = runtime.GOMAXPROCS(MAXPROCS)
-	fmt.Println("MaxProcs = ", max_procs)
+	procs := runtime.GOMAXPROCS(maxProcs)
+	// runtime.GOMAXPROCS() returns previous procs
+	// so make second call to get actual procs
+	procs = runtime.GOMAXPROCS(maxProcs)
+	fmt.Println("MaxProcs = ", procs)
 
-	ch1 := make(chan int)
-	ch2 := make(chan float64)
+	ch1 := make(chan int)     // this is testing channel
+	ch2 := make(chan float64) // this is result collecting channel
 
-	go chan_filler(ch1, ch2)
-	go chan_extractor(ch1, ch2)
+	go filler(ch1, ch2)
+	go extractor(ch1, ch2)
 
 	fmt.Println("Total:", <-ch2, <-ch2)
 
 }
 
-func chan_filler(ch1 chan int, ch2 chan float64) {
+// fill ch1 with garbage, after test fill ch2 with elapsed time
+func filler(ch1 chan int, ch2 chan float64) {
 
-	const CHANNEL_SIZE = 1000000
+	const channelSize = 1000000
 
-	for i := 0; i < CHANNEL_SIZE; i++ {
-		for j := 0; j < LOAD_CYCLES; j++ {
+	for i := 0; i < channelSize; i++ {
+		for j := 0; j < cycleNumber; j++ {
 			i++
 		}
-		//thus we avoid optimizer influence
-		i = i - LOAD_CYCLES
+		// thus we avoid optimizer influence
+		i = i - cycleNumber
 		ch1 <- i
 
 	}
+	// signal "portion end"
 	ch1 <- -1
 	ch2 <- 0.0
 }
 
-func chan_extractor(ch1 chan int, ch2 chan float64) {
+func extractor(ch1 chan int, ch2 chan float64) {
 
-	const PORTION_SIZE = 100000
+	const portionSize = 100000
 	total := 0.0
 
 	for {
 		t1 := time.Now().UnixNano()
-		for i := 0; i < PORTION_SIZE; i++ {
+		for i := 0; i < portionSize; i++ {
 			// burden cycle
-			for j := 0; j < LOAD_CYCLES; j++ {
+			for j := 0; j < cycleNumber; j++ {
 				i++
 			}
-			i = i - LOAD_CYCLES
+			i = i - cycleNumber
 
 			m := <-ch1
-			if m == -1 {
+			if m == -1 { // catched signal "portion end" - time to load result
 				ch2 <- total
 			}
 		}
 
+		// collect results
 		t2 := time.Now().UnixNano()
 		dt := float64(t2-t1) / 1e9 //nanoseconds ==> seconds
 		total += dt
