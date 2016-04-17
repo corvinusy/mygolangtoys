@@ -31,6 +31,7 @@ func readInput(reader *bufio.Reader, out chan string) {
 		if input == "quit\n" {
 			os.Exit(0)
 		}
+		out <- input
 	}
 }
 
@@ -39,7 +40,7 @@ func processInput(in chan string) {
 	for line := range in {
 		total := 0
 		for i := range line {
-			if line[i] == pattern[i] {
+			if (i < len(pattern)) && (line[i] == pattern[i]) {
 				total++
 			}
 		}
