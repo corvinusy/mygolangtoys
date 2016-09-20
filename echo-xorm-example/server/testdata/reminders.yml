@@ -1,0 +1,19 @@
+# testdata/reminders.yml
+-
+    id: 1
+    message: This is message 1!
+    created: 2016-01-01 12:30:12
+    updated: 2016-02-01 12:30:12
+    hash: 1
+-
+    id: 2
+    message: This is message 2!
+    created: 2016-01-01 12:30:12
+    updated: 2016-02-01 12:30:12
+    hash: 2
+-
+    id: 3
+    message: This is new message!
+    created: 2016-01-01 12:30:12
+    updated: 2016-02-01 12:30:12
+    hash: 3

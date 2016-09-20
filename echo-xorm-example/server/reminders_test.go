@@ -1,14 +1,15 @@
 package server
 
 import (
-	"strconv"
 	"testing"
 
 	"github.com/go-resty/resty"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func (s *Suite) tableNameTest(t *testing.T) {
+type reminderTestSuite struct{}
+
+func (s *reminderTestSuite) tableNameTest(t *testing.T) {
 	Convey("test Table Name", t, func() {
 		var r Reminder
 		result := r.TableName()
@@ -16,54 +17,45 @@ func (s *Suite) tableNameTest(t *testing.T) {
 	})
 }
 
-func (s *Suite) helloTest(rc *resty.Client, t *testing.T) {
-	Convey("POST reminders", t, func() {
-		response, err := rc.R().Get("/")
-		So(err, ShouldBeNil)
-		So(response.Status(), ShouldStartWith, "200")
-	})
-}
-
-func (s *Suite) postTest(rc *resty.Client, t *testing.T) {
+func (s *reminderTestSuite) postTest(rc *resty.Client, t *testing.T) {
 	Convey("POST reminders", t, func() {
 		var result Reminder
-		_, err := rc.R().SetResult(&result).
+		resp, err := rc.R().SetResult(&result).
 			SetBody(`{"message":"bla-bla-bla"}`).
 			Post("/reminders")
 
 		So(err, ShouldBeNil)
+		So(resp.Status(), ShouldStartWith, "201")
 		So(result.Message, ShouldEqual, "bla-bla-bla")
 	})
 
 	Convey("POST reminder with bad payload", t, func() {
-		response, err := rc.R().SetBody(`this is not a json`).
+		resp, err := rc.R().SetBody(`this is not a json`).
 			Post("/reminders")
 		So(err, ShouldBeNil)
-		So(response.Status(), ShouldStartWith, "400")
+		So(resp.Status(), ShouldStartWith, "400")
 	})
 }
 
-func (s *Suite) getAllTest(rc *resty.Client, t *testing.T) {
+func (s *reminderTestSuite) getAllTest(rc *resty.Client, t *testing.T) {
 	Convey("GET all reminders", t, func() {
 		var reminders []Reminder
-		_, err := rc.R().SetResult(&reminders).Get("/reminders")
+		resp, err := rc.R().SetResult(&reminders).Get("/reminders")
 		So(err, ShouldBeNil)
+		So(resp.Status(), ShouldStartWith, "200")
 		So(reminders, ShouldNotBeEmpty)
 	})
 }
 
-func (s *Suite) getTest(rc *resty.Client, t *testing.T) {
+func (s *reminderTestSuite) getTest(rc *resty.Client, t *testing.T) {
 	Convey("GET reminder", t, func() {
 		var result Reminder
-		reminders, err := s.extractReminders(rc)
-		So(err, ShouldBeNil)
-		So(reminders, ShouldNotBeEmpty)
-
-		_, err = rc.R().SetResult(&result).
-			Get("/reminders/" + strconv.Itoa(int(reminders[0].ID)))
+		resp, err := rc.R().SetResult(&result).
+			Get("/reminders/2")
 
 		So(err, ShouldBeNil)
-		So(result.Message, ShouldNotBeBlank)
+		So(resp.Status(), ShouldStartWith, "200")
+		So(result.Message, ShouldEqual, "This is message 2!")
 	})
 
 	Convey("GET reminder with bad id", t, func() {
@@ -75,20 +67,17 @@ func (s *Suite) getTest(rc *resty.Client, t *testing.T) {
 	Convey("GET non-existent reminder", t, func() {
 		response, err := rc.R().Get("/reminders/1005009999")
 		So(err, ShouldBeNil)
-		So(response.Status(), ShouldStartWith, "404")
+		So(response.Status(), ShouldStartWith, "204")
 	})
 }
 
-func (s *Suite) putTest(rc *resty.Client, t *testing.T) {
+func (s *reminderTestSuite) putTest(rc *resty.Client, t *testing.T) {
 	Convey("PUT reminder", t, func() {
 		var result Reminder
-		reminders, err := s.extractReminders(rc)
-		So(err, ShouldBeNil)
-		So(reminders, ShouldNotBeEmpty)
 
-		_, err = rc.R().SetBody(`{"message":"ololo"}`).
+		_, err := rc.R().SetBody(`{"message":"ololo"}`).
 			SetResult(&result).
-			Put("/reminders/" + strconv.Itoa(int(reminders[0].ID)))
+			Put("/reminders/3")
 
 		So(err, ShouldBeNil)
 		So(result.Message, ShouldEqual, "ololo")
@@ -111,55 +100,35 @@ func (s *Suite) putTest(rc *resty.Client, t *testing.T) {
 	})
 
 	Convey("PUT reminder with bad payload", t, func() {
-		reminders, err := s.extractReminders(rc)
-		So(err, ShouldBeNil)
-		So(reminders, ShouldNotBeEmpty)
-
 		response, err := rc.R().
 			SetBody(`this is not a json`).
-			Put("/reminders/" + strconv.Itoa(int(reminders[0].ID)))
-
+			Put("/reminders/1")
 		So(err, ShouldBeNil)
 		So(response.Status(), ShouldStartWith, "400")
 	})
 
 }
 
-func (s *Suite) deleteTest(rc *resty.Client, t *testing.T) {
+func (s *reminderTestSuite) deleteTest(rc *resty.Client, t *testing.T) {
 	Convey("DELETE reminder", t, func() {
-		reminders, err := s.extractReminders(rc)
+		resp, err := rc.R().Delete("/reminders/3")
 		So(err, ShouldBeNil)
-		So(reminders, ShouldNotBeEmpty)
+		So(resp.Status(), ShouldStartWith, "204")
 
-		for i := range reminders {
-			_, err = rc.R().Delete("/reminders/" + strconv.Itoa(int(reminders[i].ID)))
-			So(err, ShouldBeNil)
-		}
-		reminders, err = s.extractReminders(rc)
+		_, err = rc.R().Get("/reminders/3")
 		So(err, ShouldBeNil)
-		So(reminders, ShouldBeEmpty)
+		So(resp.Status(), ShouldStartWith, "204")
 	})
 
 	Convey("Delete reminder with bad id", t, func() {
-		response, err := rc.R().Delete("/reminders/badid")
+		resp, err := rc.R().Delete("/reminders/badid")
 		So(err, ShouldBeNil)
-		So(response.Status(), ShouldStartWith, "400")
+		So(resp.Status(), ShouldStartWith, "400")
 	})
 
 	Convey("Delete non-existent reminder", t, func() {
-		response, err := rc.R().Delete("/reminders/1005009999")
+		resp, err := rc.R().Delete("/reminders/1005009999")
 		So(err, ShouldBeNil)
-		So(response.Status(), ShouldStartWith, "204")
+		So(resp.Status(), ShouldStartWith, "204")
 	})
-
-}
-
-func (s *Suite) extractReminders(rc *resty.Client) ([]Reminder, error) {
-	reminders := []Reminder{}
-	_, err := rc.R().SetResult(&reminders).Get("/reminders")
-
-	if err != nil {
-		return nil, err
-	}
-	return reminders, nil
 }

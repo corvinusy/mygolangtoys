@@ -1,9 +1,6 @@
 package server
 
 import (
-	"crypto/md5"
-	"encoding/binary"
-	"encoding/hex"
 	"net/http"
 	"strconv"
 	"time"
@@ -26,20 +23,23 @@ func (r *Reminder) TableName() string {
 	return "reminders"
 }
 
-// ReminderHandler is a container for handlers and app data
-type ReminderHandler struct {
+// reminderHandler is a container for handlers and app data
+type reminderHandler struct {
 	Orm *xorm.Engine
 }
 
 // FindAllReminders is a GET /reminders handler
-func (h *ReminderHandler) FindAllReminders(c echo.Context) error {
+func (h *reminderHandler) FindAllReminders(c echo.Context) error {
 	reminders := []Reminder{}
-	h.Orm.Find(&reminders)
+	err := h.Orm.Find(&reminders)
+	if err != nil {
+		return err
+	}
 	return c.JSON(http.StatusOK, reminders)
 }
 
 // FindReminder is a GET /reminders/{id} handler
-func (h *ReminderHandler) FindReminder(c echo.Context) error {
+func (h *reminderHandler) FindReminder(c echo.Context) error {
 	var reminder Reminder
 
 	id, err := strconv.ParseUint(c.Param("id"), 10, 0)
@@ -52,13 +52,13 @@ func (h *ReminderHandler) FindReminder(c echo.Context) error {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
 	if !found {
-		return c.String(http.StatusNotFound, "404: not found")
+		return c.NoContent(http.StatusNoContent)
 	}
 	return c.JSON(http.StatusOK, reminder)
 }
 
 // CreateReminder is a POST /reminders handler
-func (h *ReminderHandler) CreateReminder(c echo.Context) error {
+func (h *reminderHandler) CreateReminder(c echo.Context) error {
 	var (
 		err      error
 		reminder Reminder
@@ -68,9 +68,12 @@ func (h *ReminderHandler) CreateReminder(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	reminder.Hash = h.getHash(&reminder)
+	reminder.Hash, err = getMd5Hash([]byte(reminder.Message))
+	if err != nil {
+		return err
+	}
 
-	affected, err := h.Orm.Insert(&reminder)
+	affected, err := h.Orm.InsertOne(&reminder)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
 	}
@@ -82,7 +85,7 @@ func (h *ReminderHandler) CreateReminder(c echo.Context) error {
 }
 
 // UpdateReminder is a PUT /reminders/{id} handler
-func (h *ReminderHandler) UpdateReminder(c echo.Context) error {
+func (h *reminderHandler) UpdateReminder(c echo.Context) error {
 	var input, reminder Reminder
 	// parse id
 	id, err := strconv.ParseUint(c.Param("id"), 10, 0)
@@ -99,7 +102,10 @@ func (h *ReminderHandler) UpdateReminder(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 	// update in db
-	input.Hash = h.getHash(&input)
+	input.Hash, err = getMd5Hash([]byte(input.Message))
+	if err != nil {
+		return err
+	}
 	affected, err := h.Orm.Id(id).Update(&input)
 	if err != nil {
 		return c.String(http.StatusInternalServerError, err.Error())
@@ -119,7 +125,7 @@ func (h *ReminderHandler) UpdateReminder(c echo.Context) error {
 }
 
 // DeleteReminder is a DELETE /reminders/{id} ending
-func (h *ReminderHandler) DeleteReminder(c echo.Context) error {
+func (h *reminderHandler) DeleteReminder(c echo.Context) error {
 
 	var (
 		id       uint64
@@ -148,16 +154,4 @@ func (h *ReminderHandler) DeleteReminder(c echo.Context) error {
 	}
 
 	return c.NoContent(http.StatusNoContent)
-}
-
-// getHash returns Hash of record
-func (h *ReminderHandler) getHash(reminder *Reminder) string {
-	seed := time.Now().Unix()
-	buf := make([]byte, binary.Size(seed))
-	binary.PutVarint(buf, seed)
-
-	data := append([]byte(reminder.Message), buf...)
-	sumByteArray := md5.Sum(data)
-	sumString := hex.EncodeToString(sumByteArray[:])
-	return sumString
 }

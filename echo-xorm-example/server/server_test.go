@@ -1,6 +1,7 @@
 package server
 
 import (
+	"database/sql"
 	"fmt"
 	"log"
 	"net"
@@ -8,18 +9,21 @@ import (
 	"time"
 
 	"github.com/go-resty/resty"
+	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
+	"gopkg.in/testfixtures.v1"
 )
 
 type Suite struct {
 }
+
+const fixturesPath = "testdata"
 
 func waitReachable(hostport string, maxWait time.Duration) error {
 	done := time.Now().Add(maxWait)
 	for time.Now().Before(done) {
 		c, err := net.Dial("tcp", hostport)
 		if err == nil {
-			c.Close()
-			return nil
+			return c.Close()
 		}
 		time.Sleep(100 * time.Millisecond)
 	}
@@ -28,27 +32,64 @@ func waitReachable(hostport string, maxWait time.Duration) error {
 
 func TestSuite(t *testing.T) {
 
-	const baseURL = "http://localhost:11999"
+	const (
+		baseURL = "http://localhost:11110"
+		restURL = baseURL + "/rest"
+	)
+
+	err := prepareTestDatabase()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	// create test server
 	server, err := NewServer()
 	if err != nil {
 		log.Fatal("cannot create server")
 	}
 	go server.Run()
-	waitReachable("localhost:11999", 5*time.Second)
+	err = waitReachable(":11110", 3*time.Second)
+	if err != nil {
+		log.Fatal("server doesn't respond")
+	}
 
 	// create and setup resty client
 	rc := resty.New()
 	rc.SetHeader("Content-Type", "application/json")
-	rc.SetHostURL(baseURL)
 
-	// suite runners
-	s := new(Suite)
-	s.tableNameTest(t)
-	s.helloTest(rc, t)
-	s.postTest(rc, t)
-	s.getAllTest(rc, t)
-	s.getTest(rc, t)
-	s.putTest(rc, t)
-	s.deleteTest(rc, t)
+	// test runners
+	// auth
+	rc.SetHostURL(baseURL)
+	authSuite := new(authTestSuite)
+	authSuite.helloTest(rc, t)
+	authSuite.postTest(rc, t)
+	// should be called once after auth tests and before other tests
+	authSuite.setAuthToken(rc, t)
+	// reminders
+	rc.SetHostURL(restURL)
+	reminderSuite := new(reminderTestSuite)
+	reminderSuite.tableNameTest(t)
+	reminderSuite.postTest(rc, t)
+	reminderSuite.getAllTest(rc, t)
+	reminderSuite.getTest(rc, t)
+	reminderSuite.putTest(rc, t)
+	reminderSuite.deleteTest(rc, t)
+	// users
+	userSuite := new(userTestSuite)
+	userSuite.tableNameTest(t)
+	userSuite.postTest(rc, t)
+	userSuite.getAllTest(rc, t)
+	userSuite.getTest(rc, t)
+	userSuite.putTest(rc, t)
+	userSuite.deleteTest(rc, t)
+
+}
+
+func prepareTestDatabase() error {
+	db, err := sql.Open("sqlite3", "/tmp/echo-xorm-test.sqlite.db")
+	if err != nil {
+		return err
+	}
+	err = testfixtures.LoadFixtures(fixturesPath, db, &testfixtures.SQLiteHelper{})
+	return err
 }

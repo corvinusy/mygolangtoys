@@ -1,0 +1,9 @@
+//comments.tmpl
+{{define "comments"}}
+{{range .}}
+-
+    id: {{.}}
+    content: Post {{.}} comment {{.}}
+    author_name: John Doe
+{{end}}
+{{end}}
