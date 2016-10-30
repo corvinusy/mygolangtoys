@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -13,8 +12,8 @@ func main() {
 	)
 	//Enter your code here. Read input from STDIN. Print output to STDOUT
 	rd := bufio.NewReader(os.Stdin)
-	a := readIntSlice(rd)
-	b := readIntSlice(rd)
+	a, _ := readIntSlice(rd, 3)
+	b, _ := readIntSlice(rd, 3)
 	if len(a) != len(b) {
 		panic("different slice lengths")
 	}
@@ -28,18 +27,17 @@ func main() {
 	fmt.Println(aCount, bCount)
 }
 
-func readIntSlice(rd *bufio.Reader) []int {
-	var (
-		x int
-		s string
-		a []int
-	)
-	s, _ = rd.ReadString('\n')
-	scanner := bufio.NewScanner(strings.NewReader(s))
-	scanner.Split(bufio.ScanWords)
-	for scanner.Scan() {
-		fmt.Sscanf(scanner.Text(), "%d", &x)
-		a = append(a, x)
+func readIntSlice(rd *bufio.Reader, n int) ([]int, error) {
+	s, err := rd.ReadString('\n')
+	if err != nil {
+		return nil, err
 	}
-	return a[:3]
+	x := make([]int, n)
+	y := make([]interface{}, len(x))
+	for i := range x {
+		y[i] = &x[i]
+	}
+	n, err = fmt.Sscan(s, y...)
+	x = x[:n]
+	return x, err
 }
