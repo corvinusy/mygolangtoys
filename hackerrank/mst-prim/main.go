@@ -7,8 +7,6 @@ import (
 const max = 1e6 / 2
 
 func main() {
-
-	// read count
 	var (
 		ns, vs       int
 		row, col, wt int
