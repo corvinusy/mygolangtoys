@@ -58,26 +58,18 @@ Loop:
 }
 
 func isLucky(n int, primes map[int]bool) bool {
-	return isPrime(getDigitSum(n), primes) && isPrime(getDigitSqSum(n), primes)
+	sum1, sum2 := getDigitSqSum(n)
+	return isPrime(sum1, primes) && isPrime(sum2, primes)
 }
 
-func getDigitSum(n int) int {
-	var sum int
-	for n > 0 {
-		sum += n % 10
-		n = n / 10
-	}
-	return sum
-}
-
-func getDigitSqSum(n int) int {
-	var sum, x int
-	for n > 0 {
+func getDigitSqSum(n int) (int, int) {
+	var sum, sumsq, x int
+	for ; n > 0; n /= 10 {
 		x = n % 10
-		sum += x * x
-		n = n / 10
+		sum += x
+		sumsq += x * x
 	}
-	return sum
+	return sum, sumsq
 }
 
 func isPrime(n int, primes map[int]bool) bool {
