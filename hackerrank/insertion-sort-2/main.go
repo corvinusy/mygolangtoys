@@ -14,18 +14,25 @@ func main() {
 		l.PushBack(tmp)
 	}
 
-	value := tmp
+	for e := l.Front(); e.Next() != nil; e = e.Next() {
+		if e.Next().Value.(int) < e.Value.(int) {
+			insSortElem(e.Next())
+		}
+		printList(l)
+	}
+}
 
-	for e := l.Back(); e != nil; e = e.Prev() {
+func insSortElem(elem *list.Element) {
+	value := elem.Value.(int)
+	for e := elem; e != nil; e = e.Prev() {
 		if e.Prev() != nil && e.Prev().Value.(int) > value {
 			e.Value = e.Prev().Value
-			printList(l)
 		} else {
 			e.Value = value
 			break
 		}
 	}
-	printList(l)
+
 }
 
 func printList(l *list.List) {
