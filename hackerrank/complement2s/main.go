@@ -6,6 +6,15 @@ import (
 	"os"
 )
 
+/*
+	positive part
+N(n) = N(2*n) для n = 2m
+N(n+1) = N(n) + 1 для т = 2т+1
+N(1) = N(1)
+
+S(n) = S(2m) + S(2m+1)
+
+*/
 //negCache := make(map[uint32]uint32, 0)
 //posCache := make(map[uint32]uint32, 0)
 
@@ -33,6 +42,5 @@ func getOnesNumber(start, end int32) uint64 {
 			s >>= 1
 		}
 	}
-
 	return count
 }
