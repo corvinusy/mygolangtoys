@@ -34,7 +34,6 @@ func main() {
 	for !d.found {
 		d.moveBot()
 	}
-
 }
 
 func (d *data) planMove() string {
