@@ -13,6 +13,7 @@ func main() {
 	s = s[:len(s)-1] // trimRight '\r'
 	ns, _ := rd.ReadString('\n')
 	fmt.Sscan(ns, &n)
+	fmt.Println(len(s), s, n)
 
 	a := countA(s)
 	if a == 0 {
@@ -28,7 +29,7 @@ func main() {
 func countA(s []byte) int {
 	var count int
 	for i := range s {
-		if s[i] == 97 {
+		if s[i] == 'a' {
 			count++
 		}
 	}
