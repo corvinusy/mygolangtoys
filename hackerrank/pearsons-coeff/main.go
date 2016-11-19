@@ -27,9 +27,15 @@ func main() {
 	s, _ = rd.ReadString('\n')
 	fmt.Sscanln(s, thi...)
 
-	fmt.Println(getPearson(ph, hi))
-	fmt.Println(getSlope(ph, hi))
-	fmt.Println(getIntercept(ph, hi))
+	slope := getSlope(ph, hi)
+	intercept := getIntercept(ph, hi)
+
+	fmt.Println("pearson =", getPearson(ph, hi))
+	fmt.Println("slope =", slope)
+	fmt.Println("intercept =", intercept)
+	hiScore := float64(10)
+	fmt.Println("probable score = ", intercept+slope*hiScore)
+
 }
 
 func getPearson(x, y []int) float64 {
