@@ -14,7 +14,6 @@ type point struct {
 type data struct {
 	bot   point
 	dirty []point
-	moves int
 }
 
 func main() {
@@ -40,27 +39,20 @@ func main() {
 }
 
 func (d *data) moveBot() bool {
-	g := d.findNearest()
+	g := d.findNext()
 	pl := d.planMove(g)
 	fmt.Println(pl)
 	switch pl {
 	case "DOWN":
 		d.bot.x++
-		d.moves++
 	case "UP":
 		d.bot.x--
-		d.moves++
 	case "RIGHT":
 		d.bot.y++
-		d.moves++
 	case "LEFT":
 		d.bot.y--
-		d.moves++
-	case "CLEAN":
+	default: // "CLEAN":
 		d.cleanCell(g)
-		d.moves++
-	default:
-		panic("bad state")
 	}
 	return len(d.dirty) != 0
 }
@@ -68,17 +60,15 @@ func (d *data) moveBot() bool {
 func (d *data) cleanCell(g point) {
 	for i := range d.dirty {
 		if d.dirty[i].x == g.x && d.dirty[i].y == g.y {
-			//			if i+1 < len(d.dirty) {
 			d.dirty = append(d.dirty[:i], d.dirty[i+1:]...)
-			//			}
 			break
 		}
 	}
 }
 
-func (d *data) findNearest() point { // greedy algo
+func (d *data) findNext() point { // greedy
 	var ds int
-	minDs := 5 * 2
+	minDs := 50 * 50
 	var dirty point
 	for i := range d.dirty {
 		ds = d.getDist(d.dirty[i])
