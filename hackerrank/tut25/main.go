@@ -6,19 +6,19 @@ import (
 )
 
 var (
-	sieve    map[int]bool
-	sieveMax int
+	sieve    map[uint]bool
+	sieveMax uint
 )
 
 func main() {
-	var n int
+	var n uint
 	fmt.Scan(&n)
-	data := make([]int, n)
+	data := make([]uint, n)
 	for i := range data {
 		fmt.Scan(&data[i])
 	}
 
-	sieve = make(map[int]bool)
+	sieve = make(map[uint]bool)
 	sieve[2] = true
 	sieve[3] = true
 	sieve[5] = true
@@ -35,7 +35,7 @@ func main() {
 	}
 }
 
-func isPrime(x int) bool {
+func isPrime(x uint) bool {
 	switch {
 	case x == 1:
 		return false
@@ -44,14 +44,13 @@ func isPrime(x int) bool {
 	case x%2 == 0:
 		return false
 	default:
-		sqr := int(math.Sqrt(float64(x))) + 1
+		sqr := uint(math.Sqrt(float64(x))) + 1
 		extendSieve(sqr)
-		fmt.Println(sieve)
 		return !isDivisable(x)
 	}
 }
 
-func extendSieve(cap int) {
+func extendSieve(cap uint) {
 	var ok bool
 	for i := sieveMax + 2; sieveMax <= cap; i += 2 {
 		ok = true
@@ -69,7 +68,7 @@ func extendSieve(cap int) {
 	}
 }
 
-func isDivisable(x int) bool {
+func isDivisable(x uint) bool {
 	if sieve[x] {
 		return false
 	}
