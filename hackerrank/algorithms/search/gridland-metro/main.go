@@ -61,7 +61,6 @@ func releaseOverlaps(trains []ttrain) {
 				// train-i fully covered by train-j
 				if trains[i].start >= trains[j].start && trains[i].end <= trains[j].end {
 					trains[i].line = -1
-					i = -1
 					break
 				}
 				// trains overlapped, train-i is left to train-j
