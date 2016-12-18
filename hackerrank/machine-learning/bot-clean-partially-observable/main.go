@@ -19,22 +19,15 @@ const boardSize = 5
 
 func main() {
 	var (
-		err error
 		s   string
 		bot theBot
 	)
 	rd := bufio.NewReader(os.Stdin)
-	s, err = rd.ReadString('\n')
-	if err != nil {
-		panic(err)
-	}
-	fmt.Sscanf("%d %d", s, &bot.pos.x, &bot.pos.y)
+	s, _ = rd.ReadString('\n')
+	fmt.Sscanf(s, "%d %d", &bot.pos.x, &bot.pos.y)
 	bot.board = make([]string, boardSize)
 	for i := range bot.board {
-		s, err = rd.ReadString('\n')
-		if err != nil {
-			panic(err)
-		}
+		s, _ = rd.ReadString('\n')
 		bot.board[i] = s[:boardSize]
 	}
 	bot.nextMove()
@@ -105,11 +98,10 @@ func (bot *theBot) moveToCell(cell coord) string {
 func (bot theBot) moveToSearch() coord {
 	var (
 		x, y, c, closed int
-		tmp, candidate  coord
 	)
 
-	candidate = bot.pos
-	tmp = bot.pos
+	candidate := bot.pos
+	tmp := bot.pos
 	// look cell to right and left
 	for y = bot.pos.y + 1; y >= bot.pos.y-1; y -= 2 {
 		bot.pos = coord{bot.pos.x, y}
@@ -169,7 +161,7 @@ func (bot theBot) countClosed() int {
 }
 
 func (bot theBot) checkCell(c coord, v byte) bool {
-	if c.x < 0 || c.x > 4 || c.y < 0 || c.y > 4 {
+	if !(c.x >= 0 && c.x < 5 && c.y >= 0 && c.y < 5) {
 		return false
 	}
 	return bot.board[c.x][c.y] == v
