@@ -7,12 +7,16 @@ import (
 )
 
 type theBot struct {
-	pos   coord
+	pos   cell
 	board []string
 }
 
-type coord struct {
+type cell struct {
 	x, y int
+}
+
+type quadrant struct {
+	xmin, xmax, ymin, ymax int
 }
 
 const boardSize = 5
@@ -33,136 +37,103 @@ func main() {
 	bot.nextMove()
 }
 
-func (bot theBot) nextMove() {
+func (bot *theBot) nextMove() {
+	// find quadrant
+	q := bot.findQuadrant()
 	// search dirty cell
-	cell, found := bot.findDirty()
+	c, found := bot.findDirtyCell(q)
 	if !found {
-		cell = bot.moveToSearch()
+		c = bot.moveToNextQuadrant()
 	}
-	direction := bot.moveToCell(cell)
+	direction := bot.moveToCell(c)
 	fmt.Println(direction)
 }
 
-func (bot theBot) findDirty() (coord, bool) {
+func (bot *theBot) findQuadrant() quadrant {
+	switch {
+	case bot.pos.x < 3 && bot.pos.y < 3:
+		return quadrant{0, 2, 0, 2}
+	case bot.pos.x < 3 && bot.pos.y >= 3:
+		return quadrant{0, 2, 3, 4}
+	case bot.pos.x >= 3 && bot.pos.y < 3:
+		return quadrant{3, 4, 0, 2}
+	case bot.pos.x >= 3 && bot.pos.y >= 3:
+		return quadrant{3, 4, 3, 4}
+	}
+	panic("out of board")
+}
+
+func (bot *theBot) findDirtyCell(q quadrant) (cell, bool) {
 	var (
 		x, y int
-		cell coord
+		c    cell
 	)
 	// at first look current cell
-	cell = coord{bot.pos.x, bot.pos.y}
-	if bot.checkCell(cell, 'd') {
-		return cell, true
+	c = cell{bot.pos.x, bot.pos.y}
+	if bot.checkCell(c, 'd') {
+		return c, true
 	}
-	// look cell to right and left
-	for y = bot.pos.y + 1; y >= bot.pos.y-1; y -= 2 {
-		cell = coord{bot.pos.x, y}
-		if bot.checkCell(cell, 'd') {
-			return cell, true
+	// look cell to left and right
+	for y = bot.pos.y - 1; y >= bot.pos.y+1; y += 2 {
+		c = cell{bot.pos.x, y}
+		if bot.checkQuadrant(q, c) && bot.checkCell(c, 'd') {
+			return c, true
 		}
 	}
-	// look cell down and up
-	for x = bot.pos.x + 1; x >= bot.pos.x-1; x -= 2 {
-		cell = coord{x, bot.pos.y}
-		if bot.checkCell(cell, 'd') {
-			return cell, true
+	// look at cell up and down
+	for x = bot.pos.x - 1; x <= bot.pos.x+1; x += 2 {
+		c = cell{x, bot.pos.y}
+		if bot.checkQuadrant(q, c) && bot.checkCell(c, 'd') {
+			return c, true
 		}
 	}
 
 	// look cells at diags
-	for x = bot.pos.x + 1; x >= bot.pos.x-1; x -= 2 {
+	for x = bot.pos.x - 1; x <= bot.pos.x+1; x += 2 {
 		for y = bot.pos.y + 1; y >= bot.pos.y-1; y -= 2 {
-			cell = coord{x, y}
-			if bot.checkCell(cell, 'd') {
-				return cell, true
+			c = cell{x, y}
+			if bot.checkQuadrant(q, c) && bot.checkCell(c, 'd') {
+				return c, true
 			}
 		}
 	}
-	return coord{}, false
+	return cell{}, false
 }
 
-func (bot *theBot) moveToCell(cell coord) string {
+func (bot *theBot) moveToCell(c cell) string {
 	switch {
-	case bot.pos.y < cell.y:
+	case bot.pos.y < c.y:
 		return "RIGHT"
-	case bot.pos.y > cell.y:
+	case bot.pos.y > c.y:
 		return "LEFT"
-	case bot.pos.x > cell.x:
+	case bot.pos.x > c.x:
 		return "UP"
-	case bot.pos.x < cell.x:
+	case bot.pos.x < c.x:
 		return "DOWN"
 	default:
 		return "CLEAN"
 	}
 }
 
-func (bot theBot) moveToSearch() coord {
-	var (
-		x, y, c, closed int
-	)
-
-	candidate := bot.pos
-	tmp := bot.pos
-	// look cell to right and left
-	for y = bot.pos.y + 1; y >= bot.pos.y-1; y -= 2 {
-		bot.pos = coord{bot.pos.x, y}
-		c = bot.countClosed()
-		if c > closed {
-			closed = c
-			candidate = bot.pos
+func (bot *theBot) moveToNextQuadrant() cell {
+	switch {
+	case bot.pos.x < 3 && bot.pos.y < 3:
+		if bot.pos.x != 1 {
+			return cell{1, 1}
 		}
+		return cell{1, 3}
+	case bot.pos.x < 3 && bot.pos.y >= 3:
+		return cell{3, 3}
+	case bot.pos.x >= 3 && bot.pos.y >= 3:
+		return cell{3, 1}
 	}
-	// look cell to up and down
-	for x = bot.pos.x + 1; x >= bot.pos.x-1; x -= 2 {
-		bot.pos = coord{x, bot.pos.y}
-		c = bot.countClosed()
-		if c > closed {
-			closed = c
-			candidate = bot.pos
-		}
-	}
-
-	bot.pos = tmp
-	if candidate == bot.pos {
-		panic("stalled")
-	}
-	return candidate
+	return cell{1, 1}
 }
 
-func (bot theBot) countClosed() int {
-	var (
-		cell      coord
-		x, y, res int
-	)
-	// look cell to right and left
-	for y = bot.pos.y + 1; y >= bot.pos.y-1; y -= 2 {
-		cell = coord{bot.pos.x, y}
-		if bot.checkCell(cell, 'o') {
-			res++
-		}
-	}
-	// look cell down and up
-	for x = bot.pos.x + 1; x >= bot.pos.x-1; x -= 2 {
-		cell = coord{x, bot.pos.y}
-		if bot.checkCell(cell, 'o') {
-			res++
-		}
-	}
-
-	// look cells at diags
-	for x = bot.pos.x + 1; x >= bot.pos.x-1; x -= 2 {
-		for y = bot.pos.y + 1; y >= bot.pos.y-1; y -= 2 {
-			cell = coord{x, y}
-			if bot.checkCell(cell, 'o') {
-				res++
-			}
-		}
-	}
-	return res
+func (bot *theBot) checkQuadrant(q quadrant, c cell) bool {
+	return c.x >= q.xmin && c.x <= q.xmax && c.y >= q.ymin && c.y <= q.ymax
 }
 
-func (bot theBot) checkCell(c coord, v byte) bool {
-	if !(c.x >= 0 && c.x < 5 && c.y >= 0 && c.y < 5) {
-		return false
-	}
+func (bot *theBot) checkCell(c cell, v byte) bool {
 	return bot.board[c.x][c.y] == v
 }
