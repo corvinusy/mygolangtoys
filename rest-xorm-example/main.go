@@ -5,7 +5,7 @@ import (
 	"log"
 	"runtime"
 
-	"github.com/corvinusy/rest-xorm-example/restxorm"
+	"github.com/corvinusy/mygolangtoys/rest-xorm-example/restxorm"
 )
 
 func main() {

@@ -40,7 +40,7 @@ func NewServer() (*Server, error) {
 
 	//init schema
 	s.engine.ShowSQL(true)
-	s.engine.Sync2(new(Reminder))
+	s.engine.Sync(new(Reminder))
 
 	return s, nil
 
