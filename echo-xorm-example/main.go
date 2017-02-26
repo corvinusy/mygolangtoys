@@ -5,7 +5,7 @@ import (
 	"log"
 	"runtime"
 
-	"github.com/corvinusy/echo-xorm-example/server"
+	"github.com/corvinusy/mygolangtoys/echo-xorm-example/server"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -19,7 +19,7 @@ func main() {
 
 	server, err := server.NewServer()
 	if err != nil {
-		log.Fatalf("Server creation error: %s\n", err.Error)
+		log.Fatalf("Server creation error: %s\n", err.Error())
 	}
 	server.Run()
 }

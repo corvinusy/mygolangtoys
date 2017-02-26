@@ -10,7 +10,7 @@ import (
 
 	"github.com/go-resty/resty"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
-	"gopkg.in/testfixtures.v1"
+	"gopkg.in/testfixtures.v2"
 )
 
 type Suite struct {

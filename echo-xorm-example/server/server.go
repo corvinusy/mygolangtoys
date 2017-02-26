@@ -11,7 +11,6 @@ import (
 
 	"github.com/go-xorm/xorm"
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/engine/standard"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 )
@@ -64,9 +63,9 @@ func (s *Server) Run() {
 
 	// Register routes
 	// accessible routes
-	e.Get("/", authHandler.getVersion)
-	e.Get("/version", authHandler.getVersion)
-	e.Post("/auth", authHandler.getToken)
+	e.GET("/", authHandler.getVersion)
+	e.GET("/version", authHandler.getVersion)
+	e.POST("/auth", authHandler.getToken)
 
 	jwtConfig := middleware.JWTConfig{
 		SigningKey: signingKey,
@@ -76,20 +75,20 @@ func (s *Server) Run() {
 	r := e.Group("/rest")
 	r.Use(middleware.JWTWithConfig(jwtConfig)) // group middleware
 	// reminders
-	r.Post("/reminders", reminderHandler.CreateReminder)
-	r.Get("/reminders", reminderHandler.FindAllReminders)
-	r.Get("/reminders/:id", reminderHandler.FindReminder)
-	r.Put("/reminders/:id", reminderHandler.UpdateReminder)
-	r.Delete("/reminders/:id", reminderHandler.DeleteReminder)
+	r.POST("/reminders", reminderHandler.CreateReminder)
+	r.GET("/reminders", reminderHandler.FindAllReminders)
+	r.GET("/reminders/:id", reminderHandler.FindReminder)
+	r.PUT("/reminders/:id", reminderHandler.UpdateReminder)
+	r.DELETE("/reminders/:id", reminderHandler.DeleteReminder)
 	// users
-	r.Post("/users", userHandler.CreateUser)
-	r.Get("/users", userHandler.FindAllUsers)
-	r.Get("/users/:id", userHandler.FindUser)
-	r.Put("/users/:id", userHandler.UpdateUser)
-	r.Delete("/users/:id", userHandler.DeleteUser)
+	r.POST("/users", userHandler.CreateUser)
+	r.GET("/users", userHandler.FindAllUsers)
+	r.GET("/users/:id", userHandler.FindUser)
+	r.PUT("/users/:id", userHandler.UpdateUser)
+	r.DELETE("/users/:id", userHandler.DeleteUser)
 
 	log.Println("server started at localhost:11110")
-	e.Run(standard.New(":11110"))
+	e.Logger.Fatal(e.Start(":11110"))
 }
 
 func (s *Server) fillDbByPredefinedData() error {
