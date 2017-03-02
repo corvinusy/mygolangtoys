@@ -13,11 +13,11 @@ import (
 // User is a resource for /users requests
 type User struct {
 	ID       uint64    `xorm:"'id' pk autoincr unique notnull" json:"id"`
-	Login    string    `xorm:"varchar(256)" json:"login"`
-	Password string    `xorm:"varchar(256)" json:"-"`
+	Login    string    `xorm:"text" json:"login"`
+	Password string    `xorm:"text" json:"-"`
 	Created  time.Time `xorm:"created"`
 	Updated  time.Time `xorm:"updated"`
-	Hash     string    `xorm:"varchar(32)" json:"hash"`
+	Hash     string    `xorm:"'hash' text" json:"hash"`
 }
 
 // userInput represents payload data format

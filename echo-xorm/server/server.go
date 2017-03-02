@@ -22,7 +22,7 @@ var signingKey = []byte("supersecret")
 
 // Server is an main application object that shared (read-only) to application modules
 type Server struct {
-	engine *xorm.Engine
+	db *xorm.Engine
 }
 
 // NewServer creates ORM-to-DB connect, init schema and fill it with predefined data
@@ -30,14 +30,14 @@ func NewServer() (*Server, error) {
 	var err error
 	s := new(Server)
 	// init engine
-	s.engine, err = xorm.NewEngine("sqlite3", "/tmp/echo-xorm-test.sqlite.db")
+	s.db, err = xorm.NewEngine("sqlite3", "/tmp/echo-xorm-test.sqlite.db")
 	if err != nil {
 		return nil, err
 	}
 
 	//init schema
-	s.engine.ShowSQL(true)
-	err = s.engine.Sync(new(Reminder), new(User))
+	s.db.ShowSQL(true)
+	err = s.db.Sync(new(Reminder), new(User))
 	if err != nil {
 		return nil, err
 	}
@@ -55,13 +55,12 @@ func (s *Server) Run() {
 	e := echo.New()
 
 	// Global Middleware
-	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	var (
-		authHandler     = authHandler{Orm: s.engine}
-		reminderHandler = reminderHandler{Orm: s.engine}
-		userHandler     = userHandler{Orm: s.engine}
+		authHandler     = authHandler{Orm: s.db}
+		reminderHandler = reminderHandler{Orm: s.db}
+		userHandler     = userHandler{Orm: s.db}
 	)
 
 	// Register routes
@@ -90,13 +89,13 @@ func (s *Server) Run() {
 	r.PUT("/users/:id", userHandler.UpdateUser)
 	r.DELETE("/users/:id", userHandler.DeleteUser)
 
-	log.Println("server started at localhost:11110")
-	e.Logger.Fatal(e.Start(":11110"))
+	log.Info("server started at localhost:11110")
+	log.Fatal(e.Start(":11110"))
 }
 
 func (s *Server) fillDbByPredefinedData() error {
 	const adminName = "admin"
-	adminsAmount, err := s.engine.Count(&User{Login: adminName})
+	adminsAmount, err := s.db.Count(&User{Login: adminName})
 	if err != nil || adminsAmount != 0 {
 		return err
 	}
@@ -113,7 +112,7 @@ func (s *Server) fillDbByPredefinedData() error {
 	if err != nil {
 		return err
 	}
-	_, err = s.engine.InsertOne(
+	_, err = s.db.InsertOne(
 		&User{
 			Login:    adminName,
 			Password: string(passHash),

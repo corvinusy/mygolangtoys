@@ -12,10 +12,10 @@ import (
 // Reminder is a resource for /reminders requests
 type Reminder struct {
 	ID      uint64    `xorm:"'id' pk autoincr unique notnull" json:"id"`
-	Message string    `xorm:"varchar(1024)" json:"message"`
+	Message string    `xorm:"text" json:"message"`
 	Created time.Time `xorm:"created"`
 	Updated time.Time `xorm:"updated"`
-	Hash    string    `xorm:"varchar(32)" json:"hash"`
+	Hash    string    `xorm:"text" json:"hash"`
 }
 
 // TableName used by xorm to set table name for entity
