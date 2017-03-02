@@ -3,11 +3,11 @@ package server
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"net"
 	"testing"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-resty/resty"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	"gopkg.in/testfixtures.v2"

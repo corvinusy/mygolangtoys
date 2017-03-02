@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-xorm/xorm"
 	"github.com/labstack/echo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // User is a resource for /users requests
@@ -76,14 +77,20 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	hash, err := getMd5Hash([]byte(input.Login))
+	// encrypt password
+	passHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
+	hash, err := getMd5Hash([]byte(input.Login))
+	if err != nil {
+		return err
+	}
+	// construct user
 	user = User{
 		Login:    input.Login,
-		Password: input.Password,
+		Password: string(passHash),
 		Hash:     hash,
 	}
 
@@ -124,6 +131,12 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
+	// encrypt password
+	passHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
 	hash, err := getMd5Hash([]byte(input.Login))
 	if err != nil {
 		return err
@@ -131,7 +144,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 	// construct user
 	user = User{
 		Login:    input.Login,
-		Password: input.Password,
+		Password: string(passHash),
 		Hash:     hash,
 	}
 

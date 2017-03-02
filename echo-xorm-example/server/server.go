@@ -6,13 +6,16 @@ import (
 	"crypto/md5"
 	"encoding/base64"
 	"encoding/binary"
-	"log"
+
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-xorm/xorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
+	"golang.org/x/crypto/bcrypt"
+	//"golang.org/x/crypto/sha3"
 )
 
 var signingKey = []byte("supersecret")
@@ -100,15 +103,20 @@ func (s *Server) fillDbByPredefinedData() error {
 	if adminsAmount != 0 {
 		return nil
 	}
-	hash, err := getMd5Hash([]byte(adminName))
+	// encrypt password
+	passHash, err := bcrypt.GenerateFromPassword([]byte(adminName), bcrypt.DefaultCost)
 	if err != nil {
 		return err
 	}
 
+	hash, err := getMd5Hash([]byte(adminName))
+	if err != nil {
+		return err
+	}
 	_, err = s.engine.InsertOne(
 		&User{
 			Login:    adminName,
-			Password: adminName,
+			Password: string(passHash),
 			Hash:     hash,
 		})
 	return err
