@@ -1,4 +1,4 @@
-# echo-xorm-example
+# echo-xorm
 
 My own toy example with
 
@@ -16,23 +16,26 @@ go get -u github.com/labstack/echo
 go get -u github.com/go-xorm/xorm
 go get -u github.com/mattn/go-sqlite3
 go get -u github.com/dgrijalva/jwt-go
+go get -u github.com/Sirupsen/logrus
+go get -u golang.org/x/crypto/bcrypt
 ```
 
 ## Application
 ```bash
-go get -u github.com/corvinusy/echo-xorm-example/...
+go get -u github.com/corvinusy/mygolangtoys/echo-xorm
 ```
 
 ## Database
+
 Currently using *sqlite3*-database, located at '/tmp/echo-xorm-test.sqlite.db'
 
 ## Vendoring
-TODO it.
+
+TODO
 
 ## Testing
 - Test Framework: [Goconvey](https://github.com/smartystreets/goconvey)
 - HTTP-Client: [Go-resty](https://github.com/go-resty/resty)
-- Test Fixtures: [go-testfixtures](https://gopkg.in/testfixtures.v1)
 
 
 #License

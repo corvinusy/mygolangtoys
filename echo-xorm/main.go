@@ -3,7 +3,7 @@ package main
 import (
 	log "github.com/Sirupsen/logrus"
 
-	"github.com/corvinusy/mygolangtoys/echo-xorm-example/server"
+	"github.com/corvinusy/mygolangtoys/echo-xorm/server"
 	_ "github.com/mattn/go-sqlite3"
 )
 
