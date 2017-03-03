@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	log.SetOutput(os.Stdout)
+	log.SetOutput(os.Stderr)
 	server, err := server.NewServer()
 	if err != nil {
 		log.Fatalf("Server creation error: %s\n", err.Error())

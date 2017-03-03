@@ -18,22 +18,31 @@ var signingKey = []byte("supersecret")
 
 // Server is an main application object that shared (read-only) to application modules
 type Server struct {
-	db *xorm.Engine
+	orm    *xorm.Engine
+	logger *log.Logger
 }
 
 // NewServer creates ORM-to-DB connect, init schema and fill it with predefined data
 func NewServer() (*Server, error) {
 	var err error
 	s := new(Server)
-	// init engine
-	s.db, err = xorm.NewEngine("sqlite3", "/tmp/echo-xorm-test.sqlite.db")
+
+	// init ORM
+	s.orm, err = xorm.NewEngine("sqlite3", "/tmp/echo-xorm-test.sqlite.db")
 	if err != nil {
 		return nil, err
 	}
 
+	// setup Logger
+	// TODO: rewrite Formatter with Sergey's requirements
+	s.logger = log.StandardLogger()
+	s.logger.Formatter = &log.JSONFormatter{}
+	logCatcher := xorm.NewSimpleLogger(s.logger.Writer())
+	s.orm.SetLogger(logCatcher)
+	s.orm.ShowSQL(true)
+
 	//init schema
-	s.db.ShowSQL(true)
-	err = s.db.Sync(new(Reminder), new(User))
+	err = s.orm.Sync(new(Reminder), new(User))
 	if err != nil {
 		return nil, err
 	}
@@ -55,9 +64,9 @@ func (s *Server) Run() {
 	e.Use(middleware.Recover())
 
 	var (
-		authHandler     = authHandler{Orm: s.db}
-		reminderHandler = reminderHandler{Orm: s.db}
-		userHandler     = userHandler{Orm: s.db}
+		authHandler     = authHandler{Orm: s.orm}
+		reminderHandler = reminderHandler{Orm: s.orm}
+		userHandler     = userHandler{Orm: s.orm}
 	)
 
 	// Register routes
@@ -92,7 +101,7 @@ func (s *Server) Run() {
 
 func (s *Server) fillDbByPredefinedData() error {
 	const adminName = "admin"
-	adminsAmount, err := s.db.Count(&User{Login: adminName})
+	adminsAmount, err := s.orm.Count(&User{Login: adminName})
 	if err != nil || adminsAmount != 0 {
 		return err
 	}
@@ -109,7 +118,7 @@ func (s *Server) fillDbByPredefinedData() error {
 	if err != nil {
 		return err
 	}
-	_, err = s.db.InsertOne(
+	_, err = s.orm.InsertOne(
 		&User{
 			Login:    adminName,
 			Password: string(passHash),
@@ -118,7 +127,7 @@ func (s *Server) fillDbByPredefinedData() error {
 	return err
 }
 
-// support utility
+// helper
 func getSHA3Hash(data string) string {
 	h := make([]byte, 64)
 	sha3.ShakeSum256(h, []byte(data))
