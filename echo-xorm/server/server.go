@@ -3,11 +3,7 @@ package server
 /* zeebra */
 
 import (
-	"crypto/md5"
 	"encoding/base64"
-	"encoding/binary"
-
-	"time"
 
 	"github.com/go-xorm/xorm"
 	"github.com/labstack/echo"
@@ -15,7 +11,7 @@ import (
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
-	//"golang.org/x/crypto/sha3"
+	"golang.org/x/crypto/sha3"
 )
 
 var signingKey = []byte("supersecret")
@@ -109,7 +105,7 @@ func (s *Server) fillDbByPredefinedData() error {
 		return err
 	}
 
-	hash, err := getMd5Hash([]byte(adminName))
+	hash := getSHA3Hash(adminName)
 	if err != nil {
 		return err
 	}
@@ -123,22 +119,8 @@ func (s *Server) fillDbByPredefinedData() error {
 }
 
 // support utility
-func getMd5Hash(data []byte) (string, error) {
-	var err error
-	seed := time.Now().Unix()
-	seedBytes := make([]byte, binary.Size(seed))
-	binary.PutVarint(seedBytes, seed)
-
-	hasher := md5.New()
-	_, err = hasher.Write(seedBytes)
-	if err != nil {
-		return "", err
-	}
-	_, err = hasher.Write(data)
-	if err != nil {
-		return "", err
-	}
-
-	hash := hasher.Sum(nil)
-	return base64.StdEncoding.EncodeToString(hash), nil
+func getSHA3Hash(data string) string {
+	h := make([]byte, 64)
+	sha3.ShakeSum256(h, []byte(data))
+	return base64.StdEncoding.EncodeToString(h)
 }

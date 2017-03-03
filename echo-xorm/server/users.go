@@ -83,7 +83,7 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 		return err
 	}
 
-	hash, err := getMd5Hash([]byte(input.Login))
+	hash := getSHA3Hash(input.Login)
 	if err != nil {
 		return err
 	}
@@ -137,7 +137,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 		return err
 	}
 
-	hash, err := getMd5Hash([]byte(input.Login))
+	hash := getSHA3Hash(input.Login)
 	if err != nil {
 		return err
 	}

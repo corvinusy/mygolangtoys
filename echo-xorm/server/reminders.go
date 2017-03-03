@@ -68,7 +68,7 @@ func (h *reminderHandler) CreateReminder(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 
-	reminder.Hash, err = getMd5Hash([]byte(reminder.Message))
+	reminder.Hash = getSHA3Hash(reminder.Message)
 	if err != nil {
 		return err
 	}
@@ -102,7 +102,7 @@ func (h *reminderHandler) UpdateReminder(c echo.Context) error {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
 	// update in db
-	input.Hash, err = getMd5Hash([]byte(input.Message))
+	input.Hash = getSHA3Hash(input.Message)
 	if err != nil {
 		return err
 	}
