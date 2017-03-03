@@ -49,7 +49,7 @@ func (h *reminderHandler) FindReminder(c echo.Context) error {
 
 	found, err := h.Orm.Id(id).Get(&reminder)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if !found {
 		return c.NoContent(http.StatusNoContent)
@@ -75,7 +75,7 @@ func (h *reminderHandler) CreateReminder(c echo.Context) error {
 
 	affected, err := h.Orm.InsertOne(&reminder)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if affected == 0 {
 		return c.String(http.StatusConflict, err.Error())
@@ -108,7 +108,7 @@ func (h *reminderHandler) UpdateReminder(c echo.Context) error {
 	}
 	affected, err := h.Orm.Id(id).Update(&input)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if affected == 0 {
 		return c.String(http.StatusConflict, err.Error())
@@ -118,7 +118,7 @@ func (h *reminderHandler) UpdateReminder(c echo.Context) error {
 	reminder = Reminder{}
 	found, err = h.Orm.Id(id).Get(&reminder)
 	if err != nil || !found {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 
 	return c.JSON(http.StatusOK, reminder)
@@ -147,7 +147,7 @@ func (h *reminderHandler) DeleteReminder(c echo.Context) error {
 
 	affected, err = h.Orm.Id(id).Delete(&Reminder{})
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if affected == 0 {
 		return c.String(http.StatusConflict, err.Error())

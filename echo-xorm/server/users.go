@@ -57,7 +57,7 @@ func (h *userHandler) FindUser(c echo.Context) error {
 
 	found, err := h.Orm.Id(id).Get(&user)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if !found {
 		return c.NoContent(http.StatusNoContent)
@@ -96,7 +96,7 @@ func (h *userHandler) CreateUser(c echo.Context) error {
 
 	affected, err := h.Orm.InsertOne(&user)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if affected == 0 {
 		return c.String(http.StatusConflict, err.Error())
@@ -121,7 +121,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 	// get user from db
 	found, err := h.Orm.Id(id).Get(&user)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if !found {
 		return c.NoContent(http.StatusNoContent)
@@ -151,7 +151,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 	// update
 	affected, err := h.Orm.Id(id).Update(&user)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if affected == 0 {
 		return c.String(http.StatusConflict, err.Error())
@@ -161,7 +161,7 @@ func (h *userHandler) UpdateUser(c echo.Context) error {
 	user = User{}
 	found, err = h.Orm.Id(id).Get(&user)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if !found {
 		return c.NoContent(http.StatusNoContent)
@@ -193,7 +193,7 @@ func (h *userHandler) DeleteUser(c echo.Context) error {
 
 	affected, err = h.Orm.Id(id).Delete(&User{})
 	if err != nil {
-		return c.String(http.StatusInternalServerError, err.Error())
+		return c.String(http.StatusServiceUnavailable, err.Error())
 	}
 	if affected == 0 {
 		return c.String(http.StatusConflict, err.Error())

@@ -9,11 +9,11 @@ import (
 
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/go-xorm/xorm"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	_ "github.com/mattn/go-sqlite3" // sqlite3 driver
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/bcrypt"
 	//"golang.org/x/crypto/sha3"
 )
@@ -55,6 +55,7 @@ func (s *Server) Run() {
 	e := echo.New()
 
 	// Global Middleware
+	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
 	var (

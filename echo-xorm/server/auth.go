@@ -7,6 +7,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"github.com/go-xorm/xorm"
 	"github.com/labstack/echo"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // authHandler represents handler for '/auth'
@@ -54,7 +55,8 @@ func (h *authHandler) getToken(c echo.Context) error {
 	}
 
 	//validate user credentials
-	if input.Password != user.Password {
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(input.Password))
+	if err != nil {
 		return c.String(http.StatusForbidden, "invalid credentials")
 	}
 
@@ -63,16 +65,15 @@ func (h *authHandler) getToken(c echo.Context) error {
 
 	//set claims
 	claims := token.Claims.(jwt.MapClaims)
-	claims["iss"] = "Jon Snow"
-	claims["iat"] = true
-	claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
-
-	//signer.Claims["jti"] = "1" // should be what?
-	claims["CustomUserInfo"] = input.Login
+	claims["iss"] = "corvinusy/echo-xorm"
+	claims["iat"] = time.Now().UTC().Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 72).UTC().Unix()
+	claims["aud"] = input.Login
+	claims["jti"] = user.ID
 
 	t, err := token.SignedString(signingKey)
 	if err != nil {
-		return c.String(http.StatusInternalServerError, "Error while signing the token:"+err.Error())
+		return c.String(http.StatusServiceUnavailable, "Error while signing the token:"+err.Error())
 	}
 
 	resp := authResponse{
