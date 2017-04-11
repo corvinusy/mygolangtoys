@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"log"
 	"os"
 )
 
@@ -18,15 +19,20 @@ type cell struct {
 
 const boardSize = 5
 
-var mainLine = []cell{{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}}
+var referPath = []cell{{0, 1}, {1, 1}, {2, 1}, {3, 1}, {4, 1}, {4, 2}, {4, 3}}
 
+//-----------------------------------------------------------------------------
 func main() {
 	bot := new(Agent)
-	bot.getWorldState()
-	println(bot.nextMove())
+	err := bot.getWorld()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println(bot.nextMove())
 }
 
-func (a *Agent) getWorldState() error {
+//-----------------------------------------------------------------------------
+func (a *Agent) getWorld() error {
 	var (
 		err error
 		s   string
@@ -36,64 +42,120 @@ func (a *Agent) getWorldState() error {
 	if err != nil {
 		return err
 	}
-	fmt.Sscanf(s, "%d %d", &a.pos.x, &a.pos.y)
+	_, err = fmt.Sscanf(s, "%d %d", &a.pos.x, &a.pos.y)
+	if err != nil {
+		return err
+	}
 	a.board = make([]string, boardSize)
 	for i := range a.board {
-		s, err = rd.ReadString('\n')
-		if err != nil {
-			return err
-		}
+		s, _ = rd.ReadString('\n')
 		a.board[i] = s[:boardSize]
 	}
 	return nil
 }
 
-func (a *Agent) nextMove() string {
-	// if isDirty then CLEAN
+//-----------------------------------------------------------------------------
+func (a Agent) nextMove() string {
 	if a.isOnDirtyCell() {
 		return "CLEAN"
 	}
-	// else
-	// if not on MainLine then move to closest Main Line
-	if !a.isOnMainLine() {
-		return a.moveTo(a.closestMainLine())
-	}
-	// if on MainLine then find dirty
-	if dirtyCell, found := a.findDirtyCell(); found {
-		return a.moveTo(dirtyCell)
-	}
-	return ""
+	// findTarget
+	c := a.findTarget()
+	// generateCmd
+	return a.generateCmd(c)
 }
 
-func (a *Agent) isOnDirtyCell() bool {
+//-----------------------------------------------------------------------------
+func (a Agent) isOnDirtyCell() bool {
 	return a.board[a.pos.x][a.pos.y] == 'd'
 }
 
-func (a *Agent) isOnMainLine() bool {
-	for i := range mainLine {
-		if a.pos == mainLine[i] {
+//-----------------------------------------------------------------------------
+func (a Agent) findTarget() cell {
+	switch {
+	case !a.isOnMainPath():
+		return a.goMainPath()
+	case a.isDirtyToLeft():
+		return a.goLeft()
+	case a.isDirtyToRight():
+		return a.goRight()
+	default:
+		return a.goNextRefer()
+	}
+}
+
+//-----------------------------------------------------------------------------
+func (a Agent) isOnMainPath() bool {
+	if a.pos.y > 2 {
+		return true
+	}
+	for i := range referPath {
+		if a.pos == referPath[i] {
 			return true
 		}
 	}
 	return false
 }
 
-func (a *Agent) findDirtyCell() (cell, bool) {
-	return cell{}, false
+//-----------------------------------------------------------------------------
+func (a Agent) goMainPath() cell {
+	var c cell
+	c.x = a.pos.x
+	if a.pos.y < 3 {
+		c.y = 1
+	} else {
+		c.y = 3
+	}
+	return c
 }
 
-func (a *Agent) closestMainLine() cell {
-	switch a.pos.x {
-	case 0:
-		return cell{1, a.pos.y}
-	case 2, 4:
-		return cell{3, a.pos.y}
-	default:
+//-----------------------------------------------------------------------------
+func (a Agent) isDirtyToLeft() bool {
+	if a.pos.y == 0 || a.pos.y == 3 {
+		return false
+	}
+	return a.board[a.pos.x][a.pos.y-1] == 'd'
+}
+
+//-----------------------------------------------------------------------------
+func (a Agent) isDirtyToRight() bool {
+	if a.pos.y == 4 {
+		return false
+	}
+	return a.board[a.pos.x][a.pos.y+1] == 'd'
+}
+
+//-----------------------------------------------------------------------------
+func (a Agent) goLeft() cell {
+	if a.pos.y == 0 {
 		return cell{a.pos.x, a.pos.y}
 	}
+	return cell{a.pos.x, a.pos.y - 1}
 }
 
-func (a *Agent) moveTo(c cell) string {
+//-----------------------------------------------------------------------------
+func (a Agent) goRight() cell {
+	if a.pos.y == 4 {
+		return cell{a.pos.x, a.pos.y}
+	}
+	return cell{a.pos.x, a.pos.y + 1}
+}
+
+//-----------------------------------------------------------------------------
+func (a Agent) goNextRefer() cell {
+	for i := 0; i < len(referPath)-1; i++ {
+		if a.pos == referPath[i] {
+			return referPath[i+1]
+		}
+	}
+	if a.pos.y > 2 && a.pos.x > 0 {
+		return cell{a.pos.x - 1, a.pos.y}
+	}
+	return referPath[0]
+}
+
+//-----------------------------------------------------------------------------
+func (a Agent) generateCmd(c cell) string {
 	switch {
 	case a.pos.x > c.x:
 		return "UP"
