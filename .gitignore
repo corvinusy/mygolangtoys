@@ -3,9 +3,7 @@ vizuvas*
 vv*
 .#*
 main
-input
-input?
-output
-output?
-expected
-expected?
+input*
+output*
+expected*
+*.prof
