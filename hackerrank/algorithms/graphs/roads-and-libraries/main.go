@@ -18,24 +18,31 @@ type road [2]int
 var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func main() {
-	flag.Parse()
-	if *cpuprofile != "" {
-		f, err := os.Create(*cpuprofile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		pprof.StartCPUProfile(f)
-		defer pprof.StopCPUProfile()
-	}
 	var (
 		err error
 		q   int
+		f   *os.File
 	)
+
+	flag.Parse()
+	if *cpuprofile != "" {
+		f, err = os.Create(*cpuprofile)
+		if err != nil {
+			log.Fatal(err)
+		}
+		err = pprof.StartCPUProfile(f)
+		if err != nil {
+			panic(err)
+		}
+		defer pprof.StopCPUProfile()
+	}
+
 	in := bufio.NewReader(os.Stdin)
 	_, err = fmt.Fscan(in, &q)
 	if err != nil {
 		panic(err)
 	}
+
 	for ; q > 0; q-- {
 		var (
 			cNum, rNum   int
@@ -47,7 +54,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		roadList := list.New()
+		roadMap := map[road]bool{}
 		for ; rNum > 0; rNum-- {
 			// read roads and normalize input
 			_, err = fmt.Fscan(in, &a, &b)
@@ -57,25 +64,25 @@ func main() {
 			if a > b {
 				a, b = b, a
 			}
-			roadList.PushBack(road{a, b})
+			roadMap[road{a, b}] = true
 		}
 		// find and print result
-		fmt.Println(findCost(roadList, cNum, lCost, rCost))
+		fmt.Println(findCost(roadMap, cNum, lCost, rCost))
 	}
 }
 
-func findCost(roadList *list.List, cNum, lCost, rCost int) int {
+func findCost(roadMap map[road]bool, cNum, lCost, rCost int) int {
 	// trivial case
 	if lCost <= rCost {
 		return lCost * cNum
 	}
 	// fill cities list
-	cityList := list.New()
+	cityMap := map[int]bool{}
 	for ; cNum > 0; cNum-- {
-		cityList.PushFront(cNum)
+		cityMap[cNum] = true
 	}
 	// split roads on segments
-	cities := splitRoadsToSegments(roadList, cityList)
+	cities := splitCitiesToSegments(roadMap, cityMap)
 	// accumulate total cost
 	total := 0
 	for i := range cities {
@@ -84,63 +91,55 @@ func findCost(roadList *list.List, cNum, lCost, rCost int) int {
 	return total
 }
 
-func splitRoadsToSegments(roadList, cityList *list.List) [](*list.List) {
-	var segments [](*list.List)
-	for e := cityList.Front(); e != nil; e = e.Next() {
-		if e.Value.(int) == 0 {
+func splitCitiesToSegments(roadMap map[road]bool, cityMap map[int]bool) [](*list.List) {
+	var (
+		segments [](*list.List)
+	)
+	for k := range cityMap {
+		if !cityMap[k] {
 			continue
 		}
 		segment := list.New()
-		segment.PushBack(e.Value.(int))
-		e.Value = 0
+		segMap := map[int]bool{}
+		segment.PushBack(k)
+		cityMap[k] = false
+		segMap[k] = true
 		// find connected cities (dfs)
-		fillConnects(segment, roadList)
-		reduceCities(segment, cityList)
-		//printList(segment)
+		fillConnects(segment, roadMap, segMap)
+		reduceCities(segMap, cityMap)
 		// store segment
 		segments = append(segments, segment)
+
 	}
 	return segments
 }
 
-func fillConnects(c, r *list.List) {
+func fillConnects(seg *list.List, roadMap map[road]bool, segMap map[int]bool) {
 	var v int
-	var t *list.Element
-	for e := c.Front(); e != nil; e = e.Next() {
+	for e := seg.Front(); e != nil; e = e.Next() {
 		v = e.Value.(int)
-		for f := r.Front(); f != nil; f = t {
-			t = f.Next()
-			if v == f.Value.(road)[0] {
-				pushBackUnique(c, f.Value.(road)[1])
-				r.Remove(f)
-			} else if v == f.Value.(road)[1] {
-				pushBackUnique(c, f.Value.(road)[0])
-				r.Remove(f)
+		for road := range roadMap {
+			if v == road[0] {
+				delete(roadMap, road)
+				if !segMap[road[1]] {
+					seg.PushBack(road[1])
+					segMap[road[1]] = true
+				}
+			} else if v == road[1] {
+				delete(roadMap, road)
+				if !segMap[road[0]] {
+					seg.PushBack(road[0])
+					segMap[road[0]] = true
+				}
 			}
 		}
 	}
 }
 
-func reduceCities(segment, cityList *list.List) {
-	var v int
-
-	for es := segment.Front(); es != nil; es = es.Next() {
-		v = es.Value.(int)
-		for cs := cityList.Front(); cs != nil; cs = cs.Next() {
-			if v == cs.Value.(int) {
-				cs.Value = 0
-			}
-		}
+func reduceCities(segMap, cityMap map[int]bool) {
+	for k := range segMap {
+		cityMap[k] = false
 	}
-}
-
-func pushBackUnique(c *list.List, k int) {
-	for e := c.Front(); e != nil; e = e.Next() {
-		if e.Value.(int) == k {
-			return
-		}
-	}
-	c.PushBack(k)
 }
 
 func printList(l *list.List) {
