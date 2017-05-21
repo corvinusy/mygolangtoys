@@ -4,5 +4,8 @@ vv*
 .#*
 main
 input
+input?
 output
+output?
 expected
+expected?
