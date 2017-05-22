@@ -2,40 +2,17 @@ package main
 
 import (
 	"bufio"
-	"container/list"
 	"fmt"
-)
-
-import (
-	"flag"
-	"log"
 	"os"
-	"runtime/pprof"
 )
 
 type road [2]int
-
-var cpuprofile = flag.String("cpuprofile", "", "write cpu profile to file")
 
 func main() {
 	var (
 		err error
 		q   int
-		f   *os.File
 	)
-
-	flag.Parse()
-	if *cpuprofile != "" {
-		f, err = os.Create(*cpuprofile)
-		if err != nil {
-			log.Fatal(err)
-		}
-		err = pprof.StartCPUProfile(f)
-		if err != nil {
-			panic(err)
-		}
-		defer pprof.StopCPUProfile()
-	}
 
 	in := bufio.NewReader(os.Stdin)
 	_, err = fmt.Fscan(in, &q)
@@ -54,7 +31,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		roadMap := map[road]bool{}
+		roads := make([]road, rNum)
 		for ; rNum > 0; rNum-- {
 			// read roads and normalize input
 			_, err = fmt.Fscan(in, &a, &b)
@@ -64,88 +41,52 @@ func main() {
 			if a > b {
 				a, b = b, a
 			}
-			roadMap[road{a, b}] = true
+			roads[rNum-1] = road{a, b}
 		}
 		// find and print result
-		fmt.Println(findCost(roadMap, cNum, lCost, rCost))
+		fmt.Println(findCost(roads, cNum, lCost, rCost))
 	}
 }
 
-func findCost(roadMap map[road]bool, cNum, lCost, rCost int) int {
+func findCost(roads []road, cNum, lCost, rCost int) int {
 	// trivial case
 	if lCost <= rCost {
 		return lCost * cNum
 	}
-	// fill cities list
-	cityMap := map[int]bool{}
-	for ; cNum > 0; cNum-- {
-		cityMap[cNum] = true
-	}
 	// split roads on segments
-	cities := splitCitiesToSegments(roadMap, cityMap)
+	segments := splitCitiesToSegments(roads, cNum)
 	// accumulate total cost
 	total := 0
-	for i := range cities {
-		total += lCost + rCost*(cities[i].Len()-1)
+	for i := range segments {
+		total += lCost + rCost*(len(segments[i])-1)
 	}
 	return total
 }
 
-func splitCitiesToSegments(roadMap map[road]bool, cityMap map[int]bool) [](*list.List) {
+func splitCitiesToSegments(roads []road, cNum int) map[int]map[int]bool {
 	var (
-		segments [](*list.List)
+		k, r0, r1 int
 	)
-	for k := range cityMap {
-		if !cityMap[k] {
-			continue
+	segmentOfCity := make([]int, cNum+1) // cities-to-segments tracker
+	segments := map[int]map[int]bool{}   // segments
+	for i := 1; i <= cNum; i++ {
+		segmentOfCity[i] = i
+		segments[i] = map[int]bool{}
+		segments[i][i] = true
+	}
+	// cycle
+	for i := range roads {
+		// found segment connection - move segment 1 to segment 0
+		if segmentOfCity[roads[i][0]] != segmentOfCity[roads[i][1]] {
+			r0 = segmentOfCity[roads[i][0]]
+			r1 = segmentOfCity[roads[i][1]]
+			for k = range segments[r1] {
+				segments[r0][k] = true
+				segmentOfCity[k] = r0
+			}
+			delete(segments, r1) // delete segment
+			//fmt.Printf("%+v\n", segments) // DEBUG
 		}
-		segment := list.New()
-		segMap := map[int]bool{}
-		segment.PushBack(k)
-		cityMap[k] = false
-		segMap[k] = true
-		// find connected cities (dfs)
-		fillConnects(segment, roadMap, segMap)
-		reduceCities(segMap, cityMap)
-		// store segment
-		segments = append(segments, segment)
-
 	}
 	return segments
-}
-
-func fillConnects(seg *list.List, roadMap map[road]bool, segMap map[int]bool) {
-	var v int
-	for e := seg.Front(); e != nil; e = e.Next() {
-		v = e.Value.(int)
-		for road := range roadMap {
-			if v == road[0] {
-				delete(roadMap, road)
-				if !segMap[road[1]] {
-					seg.PushBack(road[1])
-					segMap[road[1]] = true
-				}
-			} else if v == road[1] {
-				delete(roadMap, road)
-				if !segMap[road[0]] {
-					seg.PushBack(road[0])
-					segMap[road[0]] = true
-				}
-			}
-		}
-	}
-}
-
-func reduceCities(segMap, cityMap map[int]bool) {
-	for k := range segMap {
-		cityMap[k] = false
-	}
-}
-
-func printList(l *list.List) {
-	fmt.Print("list: ")
-	for e := l.Front(); e != nil; e = e.Next() {
-		fmt.Printf("%v ", e.Value)
-	}
-	fmt.Println()
 }
